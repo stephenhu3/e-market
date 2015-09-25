@@ -49,24 +49,24 @@
 }
 
 .product {
-  width: 225px;
+  width: 247px;
   display: inline-block;
 }
 
 .thumbnail {
-  width: 225px;
+  width: 247px;
   height: 300px;
 }
 
 .thumbnail img {
-  width: 225px;
-  height: 250px;
+  width: 247px;
+  height: 247px;
 }
 
 .thumbnail > .caption h3 {
   text-align: center;
   display: table-cell;
   vertical-align: middle;
-  width: 225px;
+  width: 247px;
   font-size: 20px;
 }
