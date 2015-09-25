@@ -1,0 +1,18 @@
+/* Set site max width to 1000px */
+body {
+	margin-right: auto;
+	margin-left: auto;
+	max-width: 1000px;
+}
+
+#welcomeBanner {
+	text-align: center;
+}
+
+#logo {
+	text-align: center;
+}
+
+#product-name {
+	text-align: center;	
+}
