@@ -29,8 +29,13 @@
   display: inline-block;
 }
 
+.button {
+  padding-top: 25px;
+}
+
 .row button {
   width: 250px;
+  height: 75px;
   display: default;
   background-color: #006699;
   color: white;
