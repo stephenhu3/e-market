@@ -11,8 +11,8 @@ body {
     text-align: center;
 }
 #product-name {
-    margin-top: 10px;
-    margin-bottom: 10px;
+    margin-top: 8px;
+    margin-bottom: 5px;
     text-align: center;
 }
 .thumbnail {
@@ -41,7 +41,7 @@ body {
     position: absolute;
     top: 0;
     right: 0;
-    bottom: 50px;
+    bottom: 44px;
     left: 0;
     background: rgba(0, 0, 0, 0.5);
     color: #fff;
@@ -57,7 +57,7 @@ body {
     top: 100%;
 }
 .overlay.top h4 {
-    margin-top: 5px;
+    margin-top: 9px;
 }
 /* Miscellaneous styling for overlay */
 .thumbnail.product {
