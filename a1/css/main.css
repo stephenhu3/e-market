@@ -9,6 +9,16 @@ body {
 }
 #logo {
     text-align: center;
+    padding-left: 0px;
+    padding-right: 0px;
+}
+#navigationMenu button {
+    background-color: #EEEEEE;
+    margin-bottom: 15px;
+}
+#navigationMenu button:hover {
+    background-color: #696969;
+    color: white;
 }
 #product-name {
     margin-top: 8px;
@@ -31,11 +41,13 @@ body {
     padding-left: 10px;
     padding-right: 10px;
 }
+
 /* Show overlay. Overwrite .overlay."position" */
 .thumbnail.product:hover .overlay.top {
     top: 72.5%;
     left: 21px;
 }
+
 /* Default behaviour has overlay visible */
 .overlay {
     position: absolute;
@@ -52,6 +64,7 @@ body {
     -webkit-transition: top 0.15s, right 0.15s, bottom 0.15s, left 0.15s;
     transition: top 0.15s, right 0.15s, bottom 0.15s, left 0.15s;
 }
+
 /* Hide it with this */
 .overlay.top {
     top: 100%;
@@ -59,6 +72,7 @@ body {
 .overlay.top h4 {
     margin-top: 9px;
 }
+
 /* Miscellaneous styling for overlay */
 .thumbnail.product {
     position: relative;
@@ -71,6 +85,9 @@ body {
 .thumbnail.product img {
     max-width: 100%;
 }
+#divider {
+    border-top: 2px solid #EEEEEE
+}
 #footer {
-	text-align: center;
+    text-align: center;
 }
