@@ -19,7 +19,7 @@ var products = {
 
 var TIMEOUT = 30000;
 
-var inactiveTime = window.setTimeout(alertUser(), TIMEOUT);
+var inactiveTime = window.setInterval(alertUser, TIMEOUT);
 
 function addToCart(productName) {
   if (cart.hasOwnProperty(productName)) {
@@ -27,25 +27,31 @@ function addToCart(productName) {
   } else {
     cart.productName = 1;
   }
+  resetTimer();
 }
 
 function removeFromCart(productName) {
-  if (cart.hasOwnProperty(productName) {
+  if (cart.hasOwnProperty(productName)) {
     if (cart.productName > 1) {
       cart.productName--;
     } else {
       delete cart.productName;
     }
   } else {
-    alert(productName + " does not exist in the cart.");
+    window.alert(productName + " does not exist in the cart.");
   }
+  resetTimer();
 }
 
 function alertUser() {
-  alert('Hey there! Are you still planning to buy something?');
-  inactiveTime = window.setTimeout(alertUser(), TIMEOUT);
+  window.alert('Hey there! Are you still planning to buy something?');
 }
 
 function resetTimer() {
-  inactiveTime = window.setTimeout(alertUser(), TIMEOUT);
+  window.clearInterval(inactiveTime);
+  inactiveTime = window.setInterval(alertUser, TIMEOUT);
+}
+
+window.onload = function() {
+  resetTimer();
 }
