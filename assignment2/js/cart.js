@@ -17,6 +17,10 @@ var products = {
   _Tent: 100
 };
 
+var TIMEOUT = 30000;
+
+var inactiveTime = window.setTimeout(alertUser(), TIMEOUT);
+
 function addToCart(productName) {
   if (cart.hasOwnProperty(productName)) {
     cart.productName++;
@@ -35,4 +39,13 @@ function removeFromCart(productName) {
   } else {
     alert(productName + " does not exist in the cart.");
   }
+}
+
+function alertUser() {
+  alert('Hey there! Are you still planning to buy something?');
+  inactiveTime = window.setTimeout(alertUser(), TIMEOUT);
+}
+
+function resetTimer() {
+  inactiveTime = window.setTimeout(alertUser(), TIMEOUT);
 }
