@@ -19,23 +19,23 @@ var products = {
 
 // Map from displayed product names to the product prices table
 var productDisplayNames = {
-  "Sorting Box": Box1,
-  "Colored Box": Box2,
-  "Shirt": Clothes1,
-  "Dress" Clothes2,
-  "Jeans": Jeans,
-  "Keyboard": Keyboard,
-  "Keyboard & Mouse": KeyboardCombo,
-  "Mouse": Mice,
-  "Dell PC": PC1,
-  "Refurbished PC": PC2,
-  "Gaming PC": PC3,
-  "Tent": Tent
+  "Sorting Box": "Box1",
+  "Colored Box": "Box2",
+  "Shirt": "Clothes1",
+  "Dress": "Clothes2",
+  "Jeans": "Jeans",
+  "Keyboard": "Keyboard",
+  "Keyboard & Mouse": "KeyboardCombo",
+  "Mouse": "Mice",
+  "Dell PC": "PC1",
+  "Refurbished PC": "PC2",
+  "Gaming PC": "PC3",
+  "Tent": "Tent"
 };
 
 var TIMEOUT = 30000;
 
-var inactiveTime = window.setInterval(alertUser, TIMEOUT);
+// var inactiveTime = window.setInterval(alertUser, TIMEOUT);
 
 function addToCart(productName) {
   var product = productDisplayNames[productName];
@@ -48,11 +48,12 @@ function addToCart(productName) {
 }
 
 function removeFromCart(productName) {
-  if (cart.hasOwnProperty(productName)) {
-    if (cart[productName] > 1) {
-      cart[productName]--;
+  var product = productDisplayNames[productName];
+  if (cart.hasOwnProperty(product)) {
+    if (cart[product] > 1) {
+      cart[product]--;
     } else {
-      delete cart[productName];
+      delete cart[product];
     }
   } else {
     window.alert(productName + ' does not exist in the cart.');
@@ -73,10 +74,18 @@ function showCart() {
   var cartString = 'Cart:\n\n';
   for (var item in cart) {
     if (cart.hasOwnProperty(item)) {
-      cartString += item + ': ' + cart[item] + ' in cart' + '\n';
+      cartString += getProductDisplayName(item) + ': ' + cart[item] + ' in cart' + '\n';
     }
   }
   alert(cartString);
+}
+
+// Iterates through product display names table and returns name of the input product
+function getProductDisplayName(product) {
+  for (name in productDisplayNames) {
+    if (productDisplayNames[name] == product)
+      return name;
+  }
 }
 
 window.onload = function() {
