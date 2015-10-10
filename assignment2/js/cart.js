@@ -17,15 +17,32 @@ var products = {
   Tent: 100
 };
 
+// Map from displayed product names to the product prices table
+var productDisplayNames = {
+  "Sorting Box": Box1,
+  "Colored Box": Box2,
+  "Shirt": Clothes1,
+  "Dress" Clothes2,
+  "Jeans": Jeans,
+  "Keyboard": Keyboard,
+  "Keyboard & Mouse": KeyboardCombo,
+  "Mouse": Mice,
+  "Dell PC": PC1,
+  "Refurbished PC": PC2,
+  "Gaming PC": PC3,
+  "Tent": Tent
+};
+
 var TIMEOUT = 30000;
 
 var inactiveTime = window.setInterval(alertUser, TIMEOUT);
 
 function addToCart(productName) {
-  if (cart.hasOwnProperty(productName)) {
-    cart[productName]++;
+  var product = productDisplayNames[productName];
+  if (cart.hasOwnProperty(product)) {
+    cart[product]++;
   } else {
-    cart[productName] = 1;
+    cart[product] = 1;
   }
   resetTimer();
 }
