@@ -5,17 +5,17 @@ var cart = {};
 // Represents quantity of each product in supply
 var products = {
   Box1: 10,
-  Box2: 5,
-  Clothes1: 20,
-  Clothes2: 30,
-  Jeans: 50,
-  Keyboard: 20,
-  KeyboardCombo: 40,
-  Mice: 20,
-  PC1: 350,
-  PC2: 400,
-  PC3: 300,
-  Tent: 100
+  Box2: 10,
+  Clothes1: 10,
+  Clothes2: 10,
+  Jeans: 10,
+  Keyboard: 10,
+  KeyboardCombo: 10,
+  Mice: 10,
+  PC1: 10,
+  PC2: 10,
+  PC3: 10,
+  Tent: 10
 };
 
 /* Map from displayed product names to the product prices table
@@ -105,6 +105,7 @@ function showCart() {
     else
       alert("Cart is empty.");
   }
+  resetTimer();
 }
 
 // Iterates through product display names table and returns name of the input product
