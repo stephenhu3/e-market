@@ -23,19 +23,6 @@ var products = {
    to differ from the model's product name representation
    However, for sake of automated test, products will be named the same */
 var productDisplayNames = {
-  "Sorting Box": "Box1",
-  "Colored Box": "Box2",
-  "Shirt": "Clothes1",
-  "Dress": "Clothes2",
-  "Jeans": "Jeans",
-  "Keyboard": "Keyboard",
-  "Keyboard & Mouse": "KeyboardCombo",
-  "Mouse": "Mice",
-  "Dell PC": "PC1",
-  "Refurbished PC": "PC2",
-  "Gaming PC": "PC3",
-  "Tent": "Tent",
-
   // These redudant entries are included for the sake of automated test
   "Box1": "Box1",
   "Box2": "Box2",
@@ -48,6 +35,20 @@ var productDisplayNames = {
   "PC1": "PC1",
   "PC2": "PC2",
   "PC3": "PC3",
+  "Tent": "Tent",
+
+  // These are the desired displayed name
+  "Sorting Box": "Box1",
+  "Colored Box": "Box2",
+  "Shirt": "Clothes1",
+  "Dress": "Clothes2",
+  "Jeans": "Jeans",
+  "Keyboard": "Keyboard",
+  "Keyboard & Mouse": "KeyboardCombo",
+  "Mouse": "Mice",
+  "Dell PC": "PC1",
+  "Refurbished PC": "PC2",
+  "Gaming PC": "PC3",
   "Tent": "Tent"
 };
 
@@ -90,15 +91,20 @@ function resetTimer() {
   inactiveTime = window.setInterval(alertUser, TIMEOUT);
 }
 
-// TODO: display each item as a separate alert (30 second interval between alerts)
 function showCart() {
-  var cartString = 'All Items in Cart:\n\n';
+  var iter = 0;
+  var cartAlerts=[];
   for (var item in cart) {
     if (cart.hasOwnProperty(item)) {
-      cartString += getProductDisplayName(item) + ' | Quantity: ' + cart[item] + '\n';
+      var cartString = 'Items in Cart:\n' + getProductDisplayName(item) + ' | Quantity: ' + cart[item] + '\n';
+      // After first alert, each following product will be alerted in 30 second intervals
+      cartAlerts.push(cartString);
+      setTimeout(function(index){alert(cartAlerts[index])}, (iter) * TIMEOUT, iter);
+      iter++;
     }
+    else
+      alert("Cart is empty.");
   }
-  alert(cartString);
 }
 
 // Iterates through product display names table and returns name of the input product

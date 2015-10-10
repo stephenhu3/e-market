@@ -8,4 +8,8 @@ $(document).ready(function() {
 		var productName = $(this).parents(".box").siblings(".product-name").html();
 		removeFromCart(productName);
 	});
+
+	$(".show-cart").click(function() {
+		showCart();
+	});
 });
