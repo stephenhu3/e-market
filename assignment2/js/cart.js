@@ -35,7 +35,7 @@ var productDisplayNames = {
 
 var TIMEOUT = 30000;
 
-// var inactiveTime = window.setInterval(alertUser, TIMEOUT);
+var inactiveTime = window.setInterval(alertUser, TIMEOUT);
 
 function addToCart(productName) {
   var product = productDisplayNames[productName];
