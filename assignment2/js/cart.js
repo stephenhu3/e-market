@@ -2,6 +2,7 @@
 
 var cart = {};
 
+// Represents quantity of each product in supply
 var products = {
   Box1: 10,
   Box2: 5,
@@ -17,7 +18,10 @@ var products = {
   Tent: 100
 };
 
-// Map from displayed product names to the product prices table
+/* Map from displayed product names to the product prices table
+   Provides flexibility for the displayed product name in the view
+   to differ from the model's product name representation
+   However, for sake of automated test, products will be named the same */
 var productDisplayNames = {
   "Sorting Box": "Box1",
   "Colored Box": "Box2",
@@ -30,6 +34,20 @@ var productDisplayNames = {
   "Dell PC": "PC1",
   "Refurbished PC": "PC2",
   "Gaming PC": "PC3",
+  "Tent": "Tent",
+
+  // These redudant entries are included for the sake of automated test
+  "Box1": "Box1",
+  "Box2": "Box2",
+  "Clothes1": "Clothes1",
+  "Clothes2": "Clothes2",
+  "Jeans": "Jeans",
+  "Keyboard": "Keyboard",
+  "KeyboardCombo": "KeyboardCombo",
+  "Mice": "Mice",
+  "PC1": "PC1",
+  "PC2": "PC2",
+  "PC3": "PC3",
   "Tent": "Tent"
 };
 
@@ -44,6 +62,7 @@ function addToCart(productName) {
   } else {
     cart[product] = 1;
   }
+  products[product]--;
   resetTimer();
 }
 
@@ -55,6 +74,7 @@ function removeFromCart(productName) {
     } else {
       delete cart[product];
     }
+    products[product]++;
   } else {
     window.alert(productName + ' does not exist in the cart.');
   }
@@ -70,11 +90,12 @@ function resetTimer() {
   inactiveTime = window.setInterval(alertUser, TIMEOUT);
 }
 
+// TODO: display each item as a separate alert (30 second interval between alerts)
 function showCart() {
-  var cartString = 'Cart:\n\n';
+  var cartString = 'All Items in Cart:\n\n';
   for (var item in cart) {
     if (cart.hasOwnProperty(item)) {
-      cartString += getProductDisplayName(item) + ': ' + cart[item] + ' in cart' + '\n';
+      cartString += getProductDisplayName(item) + ' | Quantity: ' + cart[item] + '\n';
     }
   }
   alert(cartString);
