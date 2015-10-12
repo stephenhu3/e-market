@@ -1,3 +1,5 @@
+'use strict';
+
 $(document).ready(function() {
 	$(".add-cart").click(function() {
 		var productName = $(this).parents(".box").siblings(".product-name").html();
