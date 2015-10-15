@@ -11,6 +11,7 @@
     background-color: #EEEEEE;
 }
 .product img {
+    position: relative;
     height: 225px;
     width: 225px;
 }
@@ -79,6 +80,11 @@
     transition: all 0.3s ease-in-out;
 
 }
+
+.box {
+    margin-top: 11px;
+}
+
 .box:hover .cart-overlay {
     opacity:0.85;
 }
@@ -87,12 +93,12 @@
     bottom:40px;
     width:50%;
     height:50%;
-    top:5px;
+    top:0px;
 }
 
 .add-cart {
     width: 65px;
-    top: 160px;
+    top: 170px;
     left: 57.5px;
     color: #FFF;
     background-color: #7DD183;
@@ -105,7 +111,7 @@
 
 .remove-cart {
     width: 65px;
-    top: 160px;
+    top: 170px;
     left: 132.5px;
     color: #FFF;
     background-color: #D17D7D;
