@@ -88,9 +88,14 @@ var productDisplayNames = {
   "Tent": "Tent"
 };
 
-var TIMEOUT = 30000;
+// 300000 ms = 5 minutes
+var TIMEOUT = 300000;
 
-var inactiveTime = window.setInterval(alertUser, TIMEOUT);
+// Represents inactivity time in seconds
+var inactiveTime = 0;
+
+// Tick inactivity every second
+window.setInterval(tickInactivity, 1000);
 
 function addToCart(productName) {
   var product = productDisplayNames[productName];
@@ -120,13 +125,23 @@ function removeFromCart(productName) {
   updateCartDisplay();
 }
 
+function tickInactivity() {
+  inactiveTime++;
+  // If timeout threshold has been reached
+  if (inactiveTime * 1000 >= TIMEOUT) {
+    alertUser();
+    resetTimer();
+  }
+  updateInactivityDisplay()
+}
+
 function alertUser() {
   window.alert('Hey there! Are you still planning to buy something?');
 }
 
 function resetTimer() {
-  window.clearInterval(inactiveTime);
-  inactiveTime = window.setInterval(alertUser, TIMEOUT);
+  inactiveTime = 0;
+  updateInactivityDisplay()
 }
 
 function showCart() {
@@ -178,9 +193,25 @@ function getProductPrice(product) {
     return -1;
 }
 
+// Return the inactivity time elapsed in seconds
+function getInactivityTime() {
+  return inactiveTime;
+}
+
 // Update the displayed cart total price
 function updateCartDisplay() {
   document.getElementById("cart-btn").innerHTML = "Cart: ($" + getTotalPrice() + ')';
+}
+
+// Update footer display of elapsed inactivity time
+function updateInactivityDisplay() {
+  var timeElapsed = getInactivityTime();
+  var inactivityMessage;
+  if (timeElapsed < 2)
+    inactivityMessage = "You have not shopped for " + timeElapsed + " second. Hurry while supplies last!";
+  else
+    inactivityMessage = "You have not shopped for " + timeElapsed + " seconds. Hurry while supplies last!";
+  document.getElementById("inactivity-counter").innerHTML = inactivityMessage;
 }
 
 // On load, start the timer and display the cart total price
