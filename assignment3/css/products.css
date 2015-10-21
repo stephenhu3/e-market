@@ -1,0 +1,123 @@
+.product-name {
+    margin-top: 8px;
+    margin-bottom: 5px;
+    text-align: center;
+}
+.thumbnail {
+    border: 0 none;
+    box-shadow: none;
+}
+.thumbnail{
+    background-color: #EEEEEE;
+}
+.product img {
+    position: relative;
+    height: 225px;
+    width: 225px;
+}
+
+/* Show overlay. Overwrite .overlay."position" */
+.thumbnail.product:hover .overlay.top {
+    top: 72.5%;
+    left: 16px;
+}
+
+/* Default behaviour has overlay visible */
+.overlay {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 44px;
+    left: 0;
+    background: rgba(0, 0, 0, 0.5);
+    color: #fff;
+    overflow: hidden;
+    text-align: center;
+    width: 87%;
+    -moz-transition: top 0.15s, right 0.15s, bottom 0.15s, left 0.15s;
+    -webkit-transition: top 0.15s, right 0.15s, bottom 0.15s, left 0.15s;
+    transition: top 0.15s, right 0.15s, bottom 0.15s, left 0.15s;
+}
+
+/* Hide it with this */
+.overlay.top {
+    top: 100%;
+}
+.overlay.top h4 {
+    margin-top: 9px;
+}
+
+/* Miscellaneous styling for overlay */
+.thumbnail.product {
+    position: relative;
+    float: left;
+    margin: 2%;
+    overflow: hidden;
+    width: 100%;
+    max-width: 540px;
+}
+.thumbnail.product img {
+    max-width: 100%;
+}
+#divider {
+    border-top: 2px solid #EEEEEE
+}
+#footer {
+    text-align: center;
+}
+.cart-overlay {  
+    background:rgba(0, 0, 0, .75);
+    text-align:center;
+    opacity:0;	  
+    left: 10px;
+    top:10px;
+    width:90.65%;height:50%; 
+    margin-left: 11px;
+    -webkit-transition: all 0.3s ease-in-out;
+    -moz-transition: all 0.3s ease-in-out;
+    -o-transition: all 0.3s ease-in-out;
+    -ms-transition: all 0.3s ease-in-out;
+    transition: all 0.3s ease-in-out;
+
+}
+
+.box {
+    margin-top: 11px;
+}
+
+.box:hover .cart-overlay {
+    opacity:0.85;
+}
+.cart {
+    position:relative;
+    bottom:40px;
+    width:50%;
+    height:50%;
+    top:0px;
+}
+
+.add-cart {
+    width: 65px;
+    top: 170px;
+    left: 57.5px;
+    color: #FFF;
+    background-color: #7DD183;
+    border: none;
+    position: absolute;
+    z-index: 100;
+    display: block;
+    font-weight: 300;
+}
+
+.remove-cart {
+    width: 65px;
+    top: 170px;
+    left: 132.5px;
+    color: #FFF;
+    background-color: #D17D7D;
+    border: none;
+    position: absolute;
+    z-index: 100;
+    display: block;
+    font-weight: 300;
+}
