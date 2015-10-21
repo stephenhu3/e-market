@@ -97,27 +97,29 @@
 }
 
 .add-cart {
-    width: 65px;
-    top: 170px;
-    left: 57.5px;
+    width: 100px;
+    top: 157px;
+    left: 77px;
+    padding: 0px;
     color: #FFF;
     background-color: #7DD183;
     border: none;
     position: absolute;
     z-index: 100;
     display: block;
-    font-weight: 300;
+    font-weight: 400;
 }
 
 .remove-cart {
-    width: 65px;
-    top: 170px;
-    left: 132.5px;
+    width: 100px;
+    top: 182px;
+    left: 77px;
+    padding: 0px;
     color: #FFF;
     background-color: #D17D7D;
     border: none;
     position: absolute;
     z-index: 100;
     display: block;
-    font-weight: 300;
+    font-weight: 400;
 }
