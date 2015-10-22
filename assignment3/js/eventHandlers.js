@@ -17,9 +17,10 @@ $(document).ready(function() {
 		}
 	});
 
-	$(".show-cart").click(function() {
-		showCart();
-	});
+	// TODO: refactor for new cart modal
+	// $(".show-cart").click(function() {
+	// 	showCart();
+	// });
 
 	$(".thumbnail").hover(function() {
 		var children = $(this).children("h3.product-name");

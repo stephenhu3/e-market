@@ -8,12 +8,19 @@
     <link rel="shortcut icon" type="image/png" href="images/favicon.png" />
     <link rel="stylesheet" href="css/main.css" type="text/css">
     <link rel="stylesheet" href="css/products.css" type="text/css">
+    <link rel="stylesheet" href="css/modal.css" type="text/css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
     <script src="js/cart.js"></script>
     <script src="js/eventHandlers.js"></script>
 </head>
 
 <body>
+    <div id="open-cart-modal" class="cart-modal">
+        <div> 
+            <a href="#close" title="Close" class="close-cart-modal">X</a>
+            <h2>Items in Cart</h2>
+        </div>
+    </div>
     <div id="header" class="row">
         <div id="logo" class="col-xs-12 col-sm-12 col-md-2">
             <div class="jumbotron">
@@ -34,8 +41,11 @@
 
         <div id="navigationMenu" class="col-xs-6 col-sm-6 col-md-2">
             <div class="row">
-                <button type="button" class="btn btn-block show-cart">
-                    <h4 id="cart-btn"></h4></button>
+                <a href="#open-cart-modal">
+                    <button type="button" class="btn btn-block show-cart">
+                        <h4 id="cart-btn"></h4>
+                    </button>    
+                </a>
                 <button type="button" class="btn btn-block">
                     <h4>All Items</h4></button>
                 <button type="button" class="btn btn-block">

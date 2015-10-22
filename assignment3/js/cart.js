@@ -144,22 +144,23 @@ function resetTimer() {
   updateInactivityDisplay()
 }
 
-function showCart() {
-  var iter = 0;
-  var cartAlerts=[];
-  for (var item in cart) {
-    if (cart.hasOwnProperty(item)) {
-      var cartString = 'Items in Cart:\n' + getProductDisplayName(item) + ' | Quantity: ' + cart[item] + '\n';
-      // After first alert, each following product will be alerted in 30 second intervals
-      cartAlerts.push(cartString);
-      setTimeout(function(index){alert(cartAlerts[index])}, (iter) * TIMEOUT, iter);
-      iter++;
-    }
-    else
-      alert("Cart is empty.");
-  }
-  resetTimer();
-}
+// TODO: refactor for new cart modal
+// function showCart() {
+//   var iter = 0;
+//   var cartAlerts=[];
+//   for (var item in cart) {
+//     if (cart.hasOwnProperty(item)) {
+//       var cartString = 'Items in Cart:\n' + getProductDisplayName(item) + ' | Quantity: ' + cart[item] + '\n';
+//       // After first alert, each following product will be alerted in 30 second intervals
+//       cartAlerts.push(cartString);
+//       setTimeout(function(index){alert(cartAlerts[index])}, (iter) * TIMEOUT, iter);
+//       iter++;
+//     }
+//     else
+//       alert("Cart is empty.");
+//   }
+//   resetTimer();
+// }
 
 // Iterates through product display names table and returns name of the input product
 function getProductDisplayName(product) {
