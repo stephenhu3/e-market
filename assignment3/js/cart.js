@@ -59,25 +59,11 @@ var products = {
    to differ from the model's product name representation
    However, for sake of automated test, products will be named the same */
 var productDisplayNames = {
-  // These redudant entries are included for the sake of automated test
-  "Box1": "Box1",
-  "Box2": "Box2",
-  "Clothes1": "Clothes1",
-  "Clothes2": "Clothes2",
-  "Jeans": "Jeans",
-  "Keyboard": "Keyboard",
-  "KeyboardCombo": "KeyboardCombo",
-  "Mice": "Mice",
-  "PC1": "PC1",
-  "PC2": "PC2",
-  "PC3": "PC3",
-  "Tent": "Tent",
-
   // These are the desired displayed name
   "Sorting Box": "Box1",
   "Colored Box": "Box2",
-  "Shirt": "Clothes1",
-  "Dress": "Clothes2",
+  "Dress": "Clothes1",
+  "Shirt": "Clothes2",
   "Jeans": "Jeans",
   "Keyboard": "Keyboard",
   "Keyboard and Mouse": "KeyboardCombo",
