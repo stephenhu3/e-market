@@ -56,3 +56,17 @@ a.#open-cart-modal:hover {
     color: #FFFFFF;
     text-decoration: none;
 }
+
+#cart-checkout {
+    background-color: #A1E6A6;
+    border-radius: 5px;
+    border: 2px solid;
+    border-color: #EDEDED;
+    padding: 2px 10px;
+}
+
+#cart-checkout:hover {
+    background-color: #689E6C;
+    color: #FFFFFF;
+    border-color: #BFBFBF;
+}
