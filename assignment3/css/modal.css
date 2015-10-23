@@ -70,3 +70,52 @@ a.#open-cart-modal:hover {
     color: #FFFFFF;
     border-color: #BFBFBF;
 }
+
+.add-quantity {
+    width: 20px;
+    margin-left: 5px;
+    margin-bottom: 5px;
+    padding: 0px;
+    color: #FFF;
+    background-color: #7DD183;
+    border: none;
+    z-index: 100;
+    display: inline;
+    font-weight: 400;
+}
+
+.remove-quantity {
+    width: 20px;
+    margin-bottom: 5px;
+    padding: 0px;
+    color: #FFF;
+    background-color: #D17D7D;
+    border: none;
+    z-index: 100;
+    display: inline;
+    font-weight: 400;
+}
+
+.cart-product-subtotal {
+    text-align: right;
+}
+
+.cart-product-subtotal h5{
+    padding-right: 28px;
+}
+
+.cart-product-quantity h5{
+    display: inline;
+}
+
+#total-divider {
+    width: 100px;
+    margin-right: 200px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+#subtotal-header {
+    text-align: right;
+    margin-right: 25px;
+}
