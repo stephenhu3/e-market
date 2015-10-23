@@ -80,7 +80,7 @@ var productDisplayNames = {
   "Dress": "Clothes2",
   "Jeans": "Jeans",
   "Keyboard": "Keyboard",
-  "Keyboard & Mouse": "KeyboardCombo",
+  "Keyboard and Mouse": "KeyboardCombo",
   "Mouse": "Mice",
   "Dell PC": "PC1",
   "Refurbished PC": "PC2",
@@ -97,6 +97,7 @@ var inactiveTime = 0;
 // Tick inactivity every second
 window.setInterval(tickInactivity, 1000);
 
+// Pass in the display name of the product
 function addToCart(productName) {
   var product = productDisplayNames[productName];
   if (cart.hasOwnProperty(product)) {
@@ -109,6 +110,7 @@ function addToCart(productName) {
   updateCartDisplay();
 }
 
+// Pass in the display name of the product
 function removeFromCart(productName) {
   var product = productDisplayNames[productName];
   if (cart.hasOwnProperty(product)) {
