@@ -71,7 +71,18 @@ var productDisplayNames = {
   "Dell PC": "PC1",
   "Refurbished PC": "PC2",
   "Gaming PC": "PC3",
-  "Tent": "Tent"
+  "Tent": "Tent",
+  // Convert an internal product name to its displayed name.
+  //
+  // Returns the first display name that is found to be
+  // associated with internalName.
+  toDisplayName: function(internalName) {
+    for (var key in productDisplayNames) {
+      if (internalName === productDisplayNames[key]) {
+        return key;
+      }
+    }
+  }
 };
 
 // 300000 ms = 5 minutes
@@ -166,7 +177,7 @@ function getTotalPrice() {
       var productPrice = getProductPrice(item);
       if (productPrice != -1)
         // Quantity purchased multiplied by the product price
-        totalPrice += cart[item] * productPrice;      
+        totalPrice += cart[item] * productPrice;
       else
         continue;
     }

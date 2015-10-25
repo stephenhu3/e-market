@@ -5,6 +5,7 @@ $(document).ready(function() {
 		var productName = $(this).parents(".box").siblings(".product-name").html();
 		addToCart(productName);
 		$(this).siblings(".remove-cart").show();
+		updateCartModal();
 	});
 
 	$(".remove-cart").click(function() {
@@ -16,18 +17,18 @@ $(document).ready(function() {
 		if (!(internalName in cart)) {
 			$(this).hide();
 		}
+		updateCartModal();
 	});
 
 	$(".show-cart").click(function() {
 		$(".cart-modal").fadeIn();
+		updateCartModal();
 	});
 
 	$(".close-cart-modal").click(function() {
 		$(".cart-modal").fadeOut();
+		updateCartModal();
 	})
-
-	// hide modal at startup
-	$(".cart-modal").hide();
 
 	$(".thumbnail").hover(function() {
 		var children = $(this).children("h3.product-name");
@@ -42,4 +43,20 @@ $(document).ready(function() {
 			$(this).find(".remove-cart").hide();
 		}
 	});
+
+	// hide modal at startup
+	$(".cart-modal").hide();
+
+	// set cart at startup
+	updateCartModal();
 });
+
+// update cart modal view
+function updateCartModal() {
+	var cartItemList = Object.keys(cart);
+	var newHtml = "";
+	for (var i = 0; i < cartItemList.length; i++) {
+		newHtml += "<h5>" + productDisplayNames.toDisplayName(cartItemList[i]) + "</h5>";
+	}
+	$(".cart-product-name > h5").html(newHtml);
+}
