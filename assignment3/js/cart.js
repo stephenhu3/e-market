@@ -66,7 +66,7 @@ var productDisplayNames = {
   "Shirt": "Clothes2",
   "Jeans": "Jeans",
   "Keyboard": "Keyboard",
-  "Keyboard and Mouse": "KeyboardCombo",
+  "Keyboard &amp; Mouse": "KeyboardCombo",
   "Mouse": "Mice",
   "Dell PC": "PC1",
   "Refurbished PC": "PC2",
