@@ -53,10 +53,18 @@ $(document).ready(function() {
 
 // update cart modal view
 function updateCartModal() {
+	// get list of items in the cart
 	var cartItemList = Object.keys(cart);
-	var newHtml = "";
+	// update names
+	var namesHtml = "";
 	for (var i = 0; i < cartItemList.length; i++) {
-		newHtml += "<h5>" + productDisplayNames.toDisplayName(cartItemList[i]) + "</h5>";
+		namesHtml += "<h5>" + productDisplayNames.toDisplayName(cartItemList[i]) + "</h5>";
 	}
-	$(".cart-product-name > h5").html(newHtml);
+	$(".cart-product-name > h5").html(namesHtml);
+	// update prices
+	var pricesHtml = "";
+	for (var i = 0; i < cartItemList.length; i++) {
+		pricesHtml += "<h5>$" + products[cartItemList[i]].price + "</h5>";
+	}
+	$(".cart-product-price > h5").html(pricesHtml);
 }
