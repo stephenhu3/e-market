@@ -18,10 +18,16 @@ $(document).ready(function() {
 		}
 	});
 
-	// TODO: refactor for new cart modal
-	// $(".show-cart").click(function() {
-	// 	showCart();
-	// });
+	$(".show-cart").click(function() {
+		$(".cart-modal").fadeIn();
+	});
+
+	$(".close-cart-modal").click(function() {
+		$(".cart-modal").fadeOut();
+	})
+
+	// hide modal at startup
+	$(".cart-modal").hide();
 
 	$(".thumbnail").hover(function() {
 		var children = $(this).children("h3.product-name");

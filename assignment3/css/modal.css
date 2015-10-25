@@ -6,11 +6,6 @@
     left: 0;
     background: rgba(0, 0, 0, 0.8);
     z-index: 99999;
-    opacity:0;
-    -webkit-transition: opacity 400ms ease-in;
-    -moz-transition: opacity 400ms ease-in;
-    transition: opacity 400ms ease-in;
-    pointer-events: none;
 }
 
 .cart-modal:target {
@@ -45,16 +40,6 @@
 
 .close-cart-modal:hover {
     background: #6E3030;
-}
-
-a.close-cart-modal:hover {
-    text-decoration: none;
-    color: #B5B5B5;
-}
-
-a.#open-cart-modal:hover {
-    color: #FFFFFF;
-    text-decoration: none;
 }
 
 #cart-checkout {
