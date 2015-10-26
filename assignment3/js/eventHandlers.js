@@ -44,6 +44,37 @@ $(document).ready(function() {
 		}
 	});
 
+	$("body").on("click", ".add-quantity", function() {
+		// get id of this
+		var idString = $(this).attr("id");
+		if (/cart-modal-quantity-row-\d+/.test(idString)) {
+			// get the row position of the product to modify
+			var splitId = idString.split("-");
+			var relativeIndex = splitId[splitId.length - 1];
+			// update quantity of the product corresponding to the index
+			var productName = $(".cart-product-name").children("h5#cart-modal-name-row-" + relativeIndex).text();
+			addToCart(productName);
+			updateCartModal();
+		}
+	})
+
+	$("body").on("click", ".remove-quantity", function() {
+		// get id of this
+		var idString = $(this).attr("id");
+		if (/cart-modal-quantity-row-\d+/.test(idString)) {
+			// get the row position of the product to modify
+			var splitId = idString.split("-");
+			var relativeIndex = splitId[splitId.length - 1];
+			// update quantity of the product corresponding to the index
+			var productName = $(".cart-product-name").children("h5#cart-modal-name-row-" + relativeIndex).text();
+			var internalName = productDisplayNames[productName];
+			if (internalName in cart) {
+				removeFromCart(productName);
+			}
+			updateCartModal();
+		}
+	})
+
 	// hide modal at startup
 	$(".cart-modal").hide();
 
@@ -58,21 +89,24 @@ function updateCartModal() {
 	// update names
 	var namesHtml = "";
 	for (var i = 0; i < cartItemList.length; i++) {
-		namesHtml += "<h5>" + productDisplayNames.toDisplayName(cartItemList[i]) + "</h5>";
+		namesHtml += "<h5 id=\"cart-modal-name-row-" + i + "\">" +
+				productDisplayNames.toDisplayName(cartItemList[i]) + "</h5>";
 	}
-	$(".cart-product-name > h5").html(namesHtml);
+	$(".cart-product-name").html(namesHtml);
 	// update prices
 	var pricesHtml = "";
 	for (var i = 0; i < cartItemList.length; i++) {
 		pricesHtml += "<h5>$" + products[cartItemList[i]].price + "</h5>";
 	}
-	$(".cart-product-price > h5").html(pricesHtml);
+	$(".cart-product-price").html(pricesHtml);
 	// update quantities
 	var quantitiesHtml = "";
 	for (var i = 0; i < cartItemList.length; i++) {
 			quantitiesHtml += "<div><h5>" + cart[cartItemList[i]] + "</h5>" +
-			"<button class=\"add-quantity\">+</button>" +
-			"<button class=\"remove-quantity\">-</button></div>";
+			"<button class=\"add-quantity\" id=\"cart-modal-quantity-row-" + i +
+			"\">+</button>" +
+			"<button class=\"remove-quantity\" id=\"cart-modal-quantity-row-" + i +
+			"\">-</button></div>";
 	}
 	$(".cart-product-quantity").html(quantitiesHtml);
 	// update subtotal prices
