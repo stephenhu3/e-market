@@ -56,8 +56,7 @@ var products = {
 
 /* Map from displayed product names to the product prices table
    Provides flexibility for the displayed product name in the view
-   to differ from the model's product name representation
-   However, for sake of automated test, products will be named the same */
+   to differ from the model's product name representation */
 var productDisplayNames = {
   // These are the desired displayed name
   "Sorting Box": "Box1",
@@ -73,7 +72,6 @@ var productDisplayNames = {
   "Gaming PC": "PC3",
   "Tent": "Tent",
   // Convert an internal product name to its displayed name.
-  //
   // Returns the first display name that is found to be
   // associated with internalName.
   toDisplayName: function(internalName) {
@@ -142,24 +140,6 @@ function resetTimer() {
   inactiveTime = 0;
   updateInactivityDisplay()
 }
-
-// TODO: refactor for new cart modal
-// function showCart() {
-//   var iter = 0;
-//   var cartAlerts=[];
-//   for (var item in cart) {
-//     if (cart.hasOwnProperty(item)) {
-//       var cartString = 'Items in Cart:\n' + getProductDisplayName(item) + ' | Quantity: ' + cart[item] + '\n';
-//       // After first alert, each following product will be alerted in 30 second intervals
-//       cartAlerts.push(cartString);
-//       setTimeout(function(index){alert(cartAlerts[index])}, (iter) * TIMEOUT, iter);
-//       iter++;
-//     }
-//     else
-//       alert("Cart is empty.");
-//   }
-//   resetTimer();
-// }
 
 // Iterates through product display names table and returns name of the input product
 function getProductDisplayName(product) {

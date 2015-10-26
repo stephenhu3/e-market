@@ -52,7 +52,7 @@ $(document).ready(function() {
 			var splitId = idString.split("-");
 			var relativeIndex = splitId[splitId.length - 1];
 			// update quantity of the product corresponding to the index
-			var productName = $(".cart-product-name").children("h5#cart-modal-name-row-" + relativeIndex).text();
+			var productName = $(".cart-product-name").children("h5#cart-modal-name-row-" + relativeIndex).html();
 			addToCart(productName);
 			updateCartModal();
 		}
@@ -66,7 +66,8 @@ $(document).ready(function() {
 			var splitId = idString.split("-");
 			var relativeIndex = splitId[splitId.length - 1];
 			// update quantity of the product corresponding to the index
-			var productName = $(".cart-product-name").children("h5#cart-modal-name-row-" + relativeIndex).text();
+			var productName = $(".cart-product-name").children("h5#cart-modal-name-row-" + relativeIndex).html();
+			console.log(productName);
 			var internalName = productDisplayNames[productName];
 			if (internalName in cart) {
 				removeFromCart(productName);
