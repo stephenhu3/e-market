@@ -30,6 +30,12 @@ $(document).ready(function() {
 		updateCartModal();
 	})
 
+	$(document).keyup(function(e) {
+		// If escape key pressed, close the modal
+		if (e.keyCode == 27)
+			$(".cart-modal").fadeOut();
+	});
+
 	$(".thumbnail").hover(function() {
 		var children = $(this).children("h3.product-name");
 		var displayName = children.html();
