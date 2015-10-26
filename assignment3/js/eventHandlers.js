@@ -122,6 +122,10 @@ function updateCartModal() {
 	for (var i = 0; i < cartItemList.length; i++) {
 		totalPrice += cart[cartItemList[i]] * products[cartItemList[i]].price;
 	}
-	$("#cart-total").html("<h4 id=\"cart-total\">Total:&nbsp;&nbsp;$" +
+
+	var $cartTotal = $("#cart-total");
+	// remain right-justified as number of digits change
+	$cartTotal.css("margin-left", 33 - totalPrice.toString().length * 10);
+	$cartTotal.html("<h4 id=\"cart-total\">Total:&nbsp;&nbsp;$" +
 			totalPrice + "</h4>");
 }
