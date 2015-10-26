@@ -73,7 +73,6 @@ $(document).ready(function() {
 			var relativeIndex = splitId[splitId.length - 1];
 			// update quantity of the product corresponding to the index
 			var productName = $(".cart-product-name").children("h5#cart-modal-name-row-" + relativeIndex).html();
-			console.log(productName);
 			var internalName = productDisplayNames[productName];
 			if (internalName in cart) {
 				removeFromCart(productName);
@@ -109,13 +108,20 @@ function updateCartModal() {
 	// update quantities
 	var quantitiesHtml = "";
 	for (var i = 0; i < cartItemList.length; i++) {
-			quantitiesHtml += "<div><h5>" + cart[cartItemList[i]] + "</h5>" +
-			"<button class=\"add-quantity\" id=\"cart-modal-quantity-row-" + i +
+			quantitiesHtml += "<div><h5 class=\"in-cart-quantity\">" + cart[cartItemList[i]] + "</h5>" +
+			"<button class=\"add-quantity\" + id=\"cart-modal-quantity-row-" + i +
 			"\">+</button>" +
 			"<button class=\"remove-quantity\" id=\"cart-modal-quantity-row-" + i +
 			"\">-</button></div>";
 	}
 	$(".cart-product-quantity").html(quantitiesHtml);
+
+	// shift accordingly to keep add/remove buttons vertically aligned as number of digits in quantity changes
+	$(".in-cart-quantity").each(function() {
+		console.log(this.innerHTML)
+		$(this).css("margin-left", this.innerHTML.toString().length * -8);
+	});
+
 	// update subtotal prices
 	var subtotalsHtml = "";
 	for (var i = 0; i < cartItemList.length; i++) {
