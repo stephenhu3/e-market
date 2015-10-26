@@ -67,4 +67,26 @@ function updateCartModal() {
 		pricesHtml += "<h5>$" + products[cartItemList[i]].price + "</h5>";
 	}
 	$(".cart-product-price > h5").html(pricesHtml);
+	// update quantities
+	var quantitiesHtml = "";
+	for (var i = 0; i < cartItemList.length; i++) {
+			quantitiesHtml += "<div><h5>" + cart[cartItemList[i]] + "</h5>" +
+			"<button class=\"add-quantity\">+</button>" +
+			"<button class=\"remove-quantity\">-</button></div>";
+	}
+	$(".cart-product-quantity").html(quantitiesHtml);
+	// update subtotal prices
+	var subtotalsHtml = "";
+	for (var i = 0; i < cartItemList.length; i++) {
+		subtotalsHtml += "<h5>$" +
+				cart[cartItemList[i]] * products[cartItemList[i]].price + "</h5>";
+	}
+	$(".cart-product-subtotal").html(subtotalsHtml);
+	// update total price
+	var totalPrice = 0;
+	for (var i = 0; i < cartItemList.length; i++) {
+		totalPrice += cart[cartItemList[i]] * products[cartItemList[i]].price;
+	}
+	$("#cart-total").html("<h4 id=\"cart-total\">Total:&nbsp;&nbsp;$" +
+			totalPrice + "</h4>");
 }
