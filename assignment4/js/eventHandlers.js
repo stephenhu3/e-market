@@ -58,6 +58,19 @@ $(document).ready(function() {
 			} else {
 				$(this).find(".remove-cart").hide();
 			}
+			// update displayed prices
+			for (var key in product) {
+				if (product.hasOwnProperty(key) &&
+						typeof product[key]["price"] === "number") {
+					var foundProducts = $(".product-name");
+					var $foundProduct = foundProducts.filter(function(index) {
+						return foundProducts[index].innerHTML ===
+						 		productDisplayNames.toDisplayName(key);
+					});
+					$foundProduct.siblings(".overlay")
+							.children("h4").html("$" + product[key]["price"])
+				}
+			}
 		}
 	});
 
