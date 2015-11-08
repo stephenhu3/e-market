@@ -58,7 +58,7 @@ $(document).ready(function() {
 			} else {
 				$(this).find(".remove-cart").hide();
 			}
-			// update displayed prices
+			// Update displayed prices on product thumbnails
 			for (var key in product) {
 				if (product.hasOwnProperty(key) &&
 						typeof product[key]["price"] === "number") {
