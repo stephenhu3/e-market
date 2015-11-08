@@ -3,56 +3,8 @@
 var cart = {};
 
 // Represents price and quantity of each product in supply
-var products = {
-  Box1: {
-    price: 10,
-    quantity: 10
-  },
-  Box2: {
-    price: 5,
-    quantity: 10
-  },
-  Clothes1: {
-    price: 20,
-    quantity: 10
-  },
-  Clothes2: {
-    price: 30,
-    quantity: 10
-  },
-  Jeans: {
-    price: 50,
-    quantity: 10
-  },
-  Keyboard: {
-    price: 20,
-    quantity: 10
-  },
-  KeyboardCombo: {
-    price: 40,
-    quantity: 10
-  },
-  Mice: {
-    price: 20,
-    quantity: 10
-  },
-  PC1: {
-    price: 350,
-    quantity: 10
-  },
-  PC2: {
-    price: 400,
-    quantity: 10
-  },
-  PC3: {
-    price: 300,
-    quantity: 10
-  },
-  Tent: {
-    price: 100,
-    quantity: 10
-  }
-};
+// Updated using an AJAX call to the server
+var product = {};
 
 /* Map from displayed product names to the product prices table
    Provides flexibility for the displayed product name in the view
@@ -94,32 +46,36 @@ window.setInterval(tickInactivity, 1000);
 
 // Pass in the display name of the product
 function addToCart(productName) {
-  var product = productDisplayNames[productName];
-  if (cart.hasOwnProperty(product)) {
-    cart[product]++;
-  } else {
-    cart[product] = 1;
+  var rawProduct = productDisplayNames[productName];
+  if (product[rawProduct] !== undefined) {
+    if (cart.hasOwnProperty(rawProduct)) {
+      cart[rawProduct]++;
+    } else {
+      cart[rawProduct] = 1;
+    }
+    product[rawProduct].quantity--;
+    resetTimer();
+    updateCartDisplay();
   }
-  products[product].quantity--;
-  resetTimer();
-  updateCartDisplay();
 }
 
 // Pass in the display name of the product
 function removeFromCart(productName) {
-  var product = productDisplayNames[productName];
-  if (cart.hasOwnProperty(product)) {
-    if (cart[product] > 1) {
-      cart[product]--;
-    } else {
-      delete cart[product];
-    }
-    products[product].quantity++;
-  } else {
-    window.alert(productName + ' does not exist in the cart.');
+  var rawProduct = productDisplayNames[productName];
+  if (product[rawProduct] !== undefined) {
+      if (cart.hasOwnProperty(rawProduct)) {
+        if (cart[rawProduct] > 1) {
+          cart[rawProduct]--;
+        } else {
+          delete cart[rawProduct];
+        }
+        product[rawProduct].quantity++;
+      } else {
+        window.alert(productName + ' does not exist in the cart.');
+      }
+      resetTimer();
+      updateCartDisplay();
   }
-  resetTimer();
-  updateCartDisplay();
 }
 
 function tickInactivity() {
@@ -142,9 +98,9 @@ function resetTimer() {
 }
 
 // Iterates through product display names table and returns name of the input product
-function getProductDisplayName(product) {
+function getProductDisplayName(prod) {
   for (name in productDisplayNames) {
-    if (productDisplayNames[name] == product)
+    if (productDisplayNames[name] == prod)
       return name;
   }
 }
@@ -166,9 +122,9 @@ function getTotalPrice() {
 }
 
 // Return the price of a product, and -1 if not found
-function getProductPrice(product) {
-  if (products.hasOwnProperty(product))
-    return products[product].price;
+function getProductPrice(prod) {
+  if (product.hasOwnProperty(prod))
+    return product[prod].price;
   else
     return -1;
 }
@@ -194,8 +150,86 @@ function updateInactivityDisplay() {
   document.getElementById("inactivity-counter").innerHTML = inactivityMessage;
 }
 
+function attemptRequest(prod) {
+  var tries = 1;
+  var MAX_TRIES = 1;
+    (function doRequest() {
+      var x = new XMLHttpRequest();
+      var url = "https://cpen400a.herokuapp.com/products";
+      x.open("GET", url);
+      var loader = function() {
+        if (x.status === 200) {
+          console.log("Request success");
+          var responseText = x.responseText;
+          var response = null;
+          if (x.getResponseHeader("Content-type") ===
+              "application/json; charset=utf-8") {
+            try {
+              response = JSON.parse(responseText);
+            } catch (e) {
+              response = null;
+              console.warn("Could not parse JSON from " + url);
+            }
+          }
+          updateProduct(response);
+          tries = 1;  // reset tries
+        } else {
+          console.error("Request contained status code: " + x.status);
+          if (tries < MAX_TRIES) {
+            tries++;
+            doRequest();
+          } else {
+            console.warn("Maximum request attempts reached")
+          }
+        }
+      }
+      // update product with obj's price and quantity properties
+      function updateProduct(obj) {
+        if (obj) {
+          var price;
+          var quantity;
+          for (var key in obj) {
+            if (obj.hasOwnProperty(key) &&
+                "price" in obj[key] &&
+                  obj[key].hasOwnProperty("price")) {
+              price = obj[key]["price"];
+            }
+            if (obj.hasOwnProperty(key) &&
+                "quantity" in obj[key] &&
+                  obj[key].hasOwnProperty("quantity")) {
+              quantity = obj[key]["quantity"];
+            }
+            if (price !== undefined && quantity !== undefined) {
+              prod[key] = {
+                'price': price,
+                'quantity': quantity
+              };
+            }
+          }
+        }
+      }
+      x.onload = function() {
+        loader();
+      };
+      x.onabort = function() {
+        console.error("Request aborted");
+      };
+      x.timeout = 500;
+      x.ontimeout = function() {
+        console.error("Request timed out");
+        loader();
+      };
+      x.onerror = function() {
+        console.error("Request contained an error with status code: " + x.status);
+        loader();
+      };
+      x.send();
+  })();
+}
+
 // On load, start the timer and display the cart total price
 window.onload = function() {
+  attemptRequest(product);
   resetTimer();
   updateCartDisplay();
 }

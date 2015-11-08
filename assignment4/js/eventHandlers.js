@@ -2,22 +2,26 @@
 
 $(document).ready(function() {
 	$(".add-cart").click(function() {
-		var productName = $(this).parents(".box").siblings(".product-name").html();
-		addToCart(productName);
-		$(this).siblings(".remove-cart").show();
-		updateCartModal();
+		if (Object.keys(product).length > 0) {
+			var productName = $(this).parents(".box").siblings(".product-name").html();
+			addToCart(productName);
+			$(this).siblings(".remove-cart").show();
+			updateCartModal();
+		}
 	});
 
 	$(".remove-cart").click(function() {
-		var displayName = $(this).parents(".box").siblings(".product-name").html();
-		var internalName = productDisplayNames[displayName];
-		if (internalName in cart) {
-			removeFromCart(displayName);
+		if (Object.keys(product).length > 0) {
+			var displayName = $(this).parents(".box").siblings(".product-name").html();
+			var internalName = productDisplayNames[displayName];
+			if (internalName in cart) {
+				removeFromCart(displayName);
+			}
+			if (!(internalName in cart)) {
+				$(this).hide();
+			}
+			updateCartModal();
 		}
-		if (!(internalName in cart)) {
-			$(this).hide();
-		}
-		updateCartModal();
 	});
 
 	$(".show-cart").click(function() {
@@ -37,16 +41,23 @@ $(document).ready(function() {
 	});
 
 	$(".thumbnail").hover(function() {
-		var children = $(this).children("h3.product-name");
-		var displayName = children.html();
-		var internalName = productDisplayNames[displayName];
-		// Ensure that only one product name was found
-		if (children.length === 1 &&
-			 internalName in cart &&
-			  cart[internalName] > 0) {
-				$(this).find(".remove-cart").show();
-		} else {
+		// Don't show add and remove button if product object is empty
+		if (!(Object.keys(product).length > 0)) {
+			$(this).find(".add-cart").hide();
 			$(this).find(".remove-cart").hide();
+		} else {
+			var children = $(this).children("h3.product-name");
+			var displayName = children.html();
+			var internalName = productDisplayNames[displayName];
+			$(this).find(".add-cart").show();
+			// Ensure that only one product name was found
+			if (children.length === 1 &&
+				 internalName in cart &&
+				  cart[internalName] > 0) {
+					$(this).find(".remove-cart").show();
+			} else {
+				$(this).find(".remove-cart").hide();
+			}
 		}
 	});
 
@@ -102,7 +113,9 @@ function updateCartModal() {
 	// update prices
 	var pricesHtml = "";
 	for (var i = 0; i < cartItemList.length; i++) {
-		pricesHtml += "<h5>$" + products[cartItemList[i]].price + "</h5>";
+		if (product[cartItemList[i]] !== undefined) {
+			pricesHtml += "<h5>$" + product[cartItemList[i]].price + "</h5>";
+		}
 	}
 	$(".cart-product-price").html(pricesHtml);
 	// update quantities
@@ -118,21 +131,24 @@ function updateCartModal() {
 
 	// shift accordingly to keep add/remove buttons vertically aligned as number of digits in quantity changes
 	$(".in-cart-quantity").each(function() {
-		console.log(this.innerHTML)
 		$(this).css("margin-left", this.innerHTML.toString().length * -8);
 	});
 
 	// update subtotal prices
 	var subtotalsHtml = "";
 	for (var i = 0; i < cartItemList.length; i++) {
-		subtotalsHtml += "<h5>$" +
-				cart[cartItemList[i]] * products[cartItemList[i]].price + "</h5>";
+		if (product[cartItemList[i]] !== undefined) {
+			subtotalsHtml += "<h5>$" +
+				cart[cartItemList[i]] * product[cartItemList[i]].price + "</h5>";
+		}
 	}
 	$(".cart-product-subtotal").html(subtotalsHtml);
 	// update total price
 	var totalPrice = 0;
 	for (var i = 0; i < cartItemList.length; i++) {
-		totalPrice += cart[cartItemList[i]] * products[cartItemList[i]].price;
+		if (product[cartItemList[i]] !== undefined) {
+			totalPrice += cart[cartItemList[i]] * product[cartItemList[i]].price;
+		}
 	}
 
 	var $cartTotal = $("#cart-total");
