@@ -32,7 +32,12 @@ $(document).ready(function() {
 	$(".close-cart-modal").click(function() {
 		$(".cart-modal").fadeOut();
 		updateCartModal();
-	})
+	});
+
+	$("#cart-checkout").click(function() {
+		checkoutCart();
+		updateCartModal();
+	});
 
 	$(document).keyup(function(e) {
 		// If escape key pressed, close the modal
@@ -86,7 +91,7 @@ $(document).ready(function() {
 			addToCart(productName);
 			updateCartModal();
 		}
-	})
+	});
 
 	$("body").on("click", ".remove-quantity", function() {
 		// get id of this
@@ -103,7 +108,7 @@ $(document).ready(function() {
 			}
 			updateCartModal();
 		}
-	})
+	});
 
 	// hide modal at startup
 	$(".cart-modal").hide();

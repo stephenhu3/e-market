@@ -152,7 +152,7 @@ function updateInactivityDisplay() {
 
 function attemptRequest(prod) {
   var tries = 1;
-  var MAX_TRIES = 1;
+  var MAX_TRIES = 5;
     (function doRequest() {
       var x = new XMLHttpRequest();
       var url = "https://cpen400a.herokuapp.com/products";
@@ -179,7 +179,7 @@ function attemptRequest(prod) {
             tries++;
             doRequest();
           } else {
-            console.warn("Maximum request attempts reached")
+            console.warn("Maximum request attempts reached");
           }
         }
       }
@@ -214,7 +214,7 @@ function attemptRequest(prod) {
       x.onabort = function() {
         console.error("Request aborted");
       };
-      x.timeout = 500;
+      x.timeout = 1500;
       x.ontimeout = function() {
         console.error("Request timed out");
         loader();
@@ -226,6 +226,65 @@ function attemptRequest(prod) {
       x.send();
   })();
 }
+
+function checkoutCart() {
+  // check cart's contents (prices and quantity)
+  // make GET request for latest prices/quantity
+  // update cart contents prices and alert to user the updated prices
+  // update cart quantities (remove if 0, reduce if less in supply than requested)
+
+  // check cart contents and get the old prices/quantity, save that info
+  // update the products array, and make note of the changes
+  // deep copy of product object
+  var oldProducts = JSON.parse(JSON.stringify(product));
+  var oldCart = [];
+  for (var item in cart) {
+    if (oldProducts.hasOwnProperty(item)) {
+      var oldItem = {
+          'name': productDisplayNames.toDisplayName(item),
+          'price': oldProducts[item].price,
+          'quantity': oldProducts[item].quantity
+      }
+      oldCart.push(oldItem);
+    }
+  }
+  // update products array
+  console.log("before");
+  console.log(product);
+  attemptRequest(product);
+  console.log("after");
+  console.log(product);
+  var cartUpdates = "";
+  for (var i = 0; i < oldCart.length; i++) {
+    var updateItem = product[productDisplayNames[oldCart[i].name]];
+    var oldItem = oldCart[i];
+    if (updateItem &&
+        updateItem.hasOwnProperty("price") &&
+          updateItem.hasOwnProperty("quantity")) {
+      console.log("enter here");
+      if (updateItem.quantity === 0) {
+        // remove item from cart
+        delete cart[productDisplayNames[oldItem.name]];
+        cartUpdates = cartUpdates + oldItem.name + ": We have run out of stock for this item. It has been removed from your cart.\n";
+        break;
+      }
+      else if (oldItem.quantity > updateItem.quantity) {
+        // update cart quantity for item
+        cart[oldItem].quantity = updateItem.quantity;
+        cartUpdates = cartUpdates + oldItem.name+ ": We do not have enough stock for this item. Cart quantity has changed from " + oldItem.quantity + "to" + updateItem.quantity + ".\n";
+      }
+      if (oldItem.price !== updateItem.price) {
+        // update item price in cart
+        cart[oldItem].price = updateItem.price;
+        cartUpdates = cartUpdates + oldItem.name + ": Our price for this item has changed from " + oldItem.price + "to" + updateItem.price + ".\n";
+      }
+      console.log("new cart:" + cartUpdates);
+    }
+  }
+  if (cartUpdates.length > 0)
+    alert(cartUpdates);
+}
+
 
 // On load, start the timer and display the cart total price
 window.onload = function() {
