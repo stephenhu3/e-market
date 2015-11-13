@@ -2,7 +2,7 @@
 
 var cart = {};
 
-// Represents price and quantity of each product in supply
+// Represents price, quantity and image URL of each product in supply
 // Updated using an AJAX call to the server
 var product = {};
 
@@ -201,6 +201,7 @@ function attemptRequest(prod) {
                 if (obj) {
                     var price;
                     var quantity;
+                    var imageUrl;
                     for (var key in obj) {
                         if (obj.hasOwnProperty(key) &&
                             "price" in obj[key] &&
@@ -212,11 +213,17 @@ function attemptRequest(prod) {
                             obj[key].hasOwnProperty("quantity")) {
                             quantity = obj[key]["quantity"];
                         }
+                        if (obj.hasOwnProperty(key) &&
+                            "url" in obj[key] &&
+                            obj[key].hasOwnProperty("url")) {
+                            url = obj[key]["url"];
+                        }
                         if (price !== undefined && quantity !==
                             undefined) {
                             prod[key] = {
                                 'price': price,
-                                'quantity': quantity
+                                'quantity': quantity,
+                                'url': url
                             };
                         }
                     }
@@ -226,6 +233,7 @@ function attemptRequest(prod) {
             }
             x.onload = function() {
                 loader();
+                updateProductImages();
             };
             x.onabort = function() {
                 console.error("Request aborted");
@@ -244,6 +252,33 @@ function attemptRequest(prod) {
             x.send();
         })();
     });
+}
+
+// Update product thumbnail images using the product variable
+function updateProductImages() {
+    // Show product images if available
+    if (Object.keys(product).length > 0) {
+        var children = $(this).children("h3.product-name");
+        var displayName = children.html();
+        var internalName = productDisplayNames[displayName];
+        // Update displayed images on product thumbnails
+        for (var key in product) {
+            if (product.hasOwnProperty(key) &&
+                typeof product[key]["url"] === "string") {
+                var foundProducts = $(".product-name");
+                var foundProduct = foundProducts.filter(
+                    function(index) {
+                        return foundProducts[index].innerHTML ===
+                            productDisplayNames.toDisplayName(
+                                key);
+                });
+                foundProduct.siblings(".box")
+                    .css("background", "11px 0px/225px 225px url(" +
+                            product[key]["url"] +
+                            ") no-repeat");
+            }
+        }
+    }
 }
 
 function checkoutCart() {
