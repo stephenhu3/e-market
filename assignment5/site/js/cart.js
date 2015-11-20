@@ -166,22 +166,18 @@ function attemptRequest(prod) {
                         console.log("Request success");
                         var responseText = x.responseText;
                         var response = null;
-                        // TODO NOTE: response from get request is currently just as a string
-                        // So the check is currently bypassed
-                        // Need to send as content type json, charset utf-8
-                        // console.log(responseText);
                         response = JSON.parse(responseText);
-                        // if (x.getResponseHeader("Content-type") ===
-                        //     "application/json; charset=utf-8") {
-                        //     try {
-                        //         response = JSON.parse(responseText);
-                        //     } catch (e) {
-                        //         response = null;
-                        //         console.warn(
-                        //             "Could not parse JSON from " +
-                        //             url);
-                        //     }
-                        // }
+                        if (x.getResponseHeader("Content-type") ===
+                            "application/json; charset=utf-8") {
+                            try {
+                                response = JSON.parse(responseText);
+                            } catch (e) {
+                                response = null;
+                                console.warn(
+                                    "Could not parse JSON from " +
+                                    url);
+                            }
+                        }
                         tries = 1; // reset tries
                         updateProduct(response);
                     } else {

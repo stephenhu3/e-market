@@ -80,42 +80,22 @@ router.route('/products')
             var productResponse = "{";
 
             for (product in products) {
-                // console.log(products[product].name);
-                // console.log(products[product].price);
-                // console.log(products[product].quantity);
-                // console.log(products[product].url);
                 if (product == products.length - 1) {
                     productResponse += 
-                    "\"" + products[product].name + "\"" + ":{\"price\":" + products[product].price + ",\"quantity\":"
-                    + products[product].quantity + ",\"url\":\""
-                    + products[product].url + "\"" + "}";
+                    '"' + products[product].name + '"' + ':{"price":' + products[product].price + ',"quantity":'
+                    + products[product].quantity + ',"url":"'
+                    + products[product].url + '"' + "}";
                 } else {
                     productResponse += 
-                    "\"" + products[product].name + "\"" + ":{\"price\":" + products[product].price + ",\"quantity\":"
-                    + products[product].quantity + ",\"url\":\""
-                    + products[product].url + "\"" + "},";
+                    '"' + products[product].name + '"' + ':{"price":' + products[product].price + ',"quantity":'
+                    + products[product].quantity + ',"url":"'
+                    + products[product].url + '"' + "},";
                 }
-                
             }
 
             productResponse += "}";
-            // res.json(productResponse);
+            res.set('Content-Type', 'text/json');
             res.send(productResponse);
-            // TODO: return in this format
-            // UPDATE: this has been achieved
-            // {
-            //     "KeyboardCombo": {
-            //         "price": 27,
-            //         "quantity": 7,
-            //         "url": "https://cpen400a.herokuapp.com/images/KeyboardCombo.png"
-            //     },
-            //     "Mice": {
-            //         "price": 7,
-            //         "quantity": 10,
-            //         "url": "https://cpen400a.herokuapp.com/images/Mice.png"
-            //     }
-            //}
-            // res.json(products);
         });
     });
 
