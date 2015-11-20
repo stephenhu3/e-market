@@ -159,7 +159,7 @@ function attemptRequest(prod) {
         var MAX_TRIES = 5;
         (function doRequest() {
             var x = new XMLHttpRequest();
-            var url = "https://localhost:8080/products";
+            var url = "http://localhost:8080/products";
             x.open("GET", url);
             var loader = function() {
                     if (x.status === 200) {

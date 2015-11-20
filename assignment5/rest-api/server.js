@@ -36,7 +36,7 @@ var port = process.env.PORT || 8080; // set our port
 
 // ROUTES FOR OUR API
 // =============================================================================
-var router = express.Router();              // get an instance of the express Router
+var router = express.Router(); // get an instance of the express Router
 
 // middleware to use for all requests
 router.use(function(req, res, next) {
@@ -76,7 +76,32 @@ router.route('/products')
         Product.find(function(err, products) {
             if (err)
                 res.send(err);
+
+            var productResponse = "{";
+
+            for (product in products) {
+                // console.log(products[product].name);
+                // console.log(products[product].price);
+                // console.log(products[product].quantity);
+                // console.log(products[product].url);
+                if (product == products.length - 1) {
+                    productResponse += 
+                    "\"" + products[product].name + "\"" + ":{\"price\":" + products[product].price + ",\"quantity\":"
+                    + products[product].quantity + ",\"url\":\""
+                    + products[product].url + "\"" + "}";
+                } else {
+                    productResponse += 
+                    "\"" + products[product].name + "\"" + ":{\"price\":" + products[product].price + ",\"quantity\":"
+                    + products[product].quantity + ",\"url\":\""
+                    + products[product].url + "\"" + "},";
+                }
+                
+            }
+
+            productResponse += "}";
+            res.send(productResponse);
             // TODO: return in this format
+            // UPDATE: this has been achieved
             // {
             //     "KeyboardCombo": {
             //         "price": 27,
@@ -89,7 +114,7 @@ router.route('/products')
             //         "url": "https://cpen400a.herokuapp.com/images/Mice.png"
             //     }
             //}
-            res.json(products);
+            // res.json(products);
         });
     });
 
