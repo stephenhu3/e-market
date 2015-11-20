@@ -99,6 +99,7 @@ router.route('/products')
             }
 
             productResponse += "}";
+            // res.json(productResponse);
             res.send(productResponse);
             // TODO: return in this format
             // UPDATE: this has been achieved
