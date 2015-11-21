@@ -5,7 +5,7 @@ var OrderSchema = new Schema({
 	// store JSON string of the user's cart object
 	cart: String,
 	// total price of order
-    total: String
+    total: Number
 });
 
 module.exports = mongoose.model('Order', OrderSchema);
