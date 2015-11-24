@@ -47,7 +47,7 @@ router.use(function(req, res, next) {
 
 // test route to make sure everything is working (accessed at GET http://localhost:8080/api)
 router.get('/api', function(req, res) {
-    res.json({ message: 'You are using BuySmart REST API' });   
+    res.json({ message: 'You are using BuySmart REST API' });
 });
 
 // on routes that end in /products
@@ -57,7 +57,7 @@ router.route('/products')
     // create a product (accessed at POST http://localhost:8080/api/products)
     .post(function(req, res) {
         var product = new Product(); // create a new instance of the Product model
-        product.name = req.body.name; 
+        product.name = req.body.name;
         product.price = req.body.price;
         product.quantity = req.body.quantity;
         product.url = req.body.url;
@@ -68,7 +68,7 @@ router.route('/products')
                 res.send(err);
             res.json({ message: 'Product successfully created' });
         });
-        
+
     })
 
     // get all the products (accessed at GET http://localhost:8080/products)
@@ -81,12 +81,12 @@ router.route('/products')
 
             for (product in products) {
                 if (product == products.length - 1) {
-                    productResponse += 
+                    productResponse +=
                     '"' + products[product].name + '"' + ':{"price":' + products[product].price + ',"quantity":'
                     + products[product].quantity + ',"url":"'
                     + products[product].url + '"' + "}";
                 } else {
-                    productResponse += 
+                    productResponse +=
                     '"' + products[product].name + '"' + ':{"price":' + products[product].price + ',"quantity":'
                     + products[product].quantity + ',"url":"'
                     + products[product].url + '"' + "},";
@@ -116,7 +116,7 @@ router.route('/products/:product_id')
         Product.findById(req.params.product_id, function(err, product) {
             if (err)
                 res.send(err);
-          
+
             // set attributes if they're defined in the PUT request
             product.name = req.body.name ? req.body.name : product.name;
             product.price = req.body.price ? req.body.price : product.price;
@@ -160,15 +160,34 @@ router.route('/orders')
                 res.send(err);
             res.json({ message: 'Order successfully created' });
         });
-        
+
     })
 
     // get all the orders (accessed at GET http://localhost:8080/orders)
     .get(function(req, res) {
         Order.find(function(err, orders) {
-            if (err)
+            if (err) {
                 res.send(err);
-            res.json(orders);
+            }
+            var orderResponse = "{";
+            var orderCount = 0;
+            for (order in orders) {
+                if (order == orders.length - 1) {
+                    orderResponse +=
+                    '"order' + orderCount + '":{"cart":' +
+                    JSON.stringify(orders[order].cart) + ',"total":' +
+                    orders[order].total + "}";
+                } else {
+                    orderResponse +=
+                    '"order' + orderCount + '":{"cart":' +
+                    JSON.stringify(orders[order].cart) + ',"total":' +
+                    orders[order].total + "},";
+                }
+                orderCount++;
+            }
+            orderResponse += "}";
+            res.set('Content-Type', 'text/json');
+            res.send(orderResponse);
         });
     });
 

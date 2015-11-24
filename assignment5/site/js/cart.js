@@ -153,7 +153,7 @@ function updateInactivityDisplay() {
     document.getElementById("inactivity-counter").innerHTML = inactivityMessage;
 }
 
-function attemptRequest(prod) {
+function attemptProductsGETRequest(prod) {
     return new Promise(function(resolve, reject) {
         var tries = 1;
         var MAX_TRIES = 5;
@@ -162,42 +162,42 @@ function attemptRequest(prod) {
             var url = "http://localhost:8080/products";
             x.open("GET", url);
             var loader = function() {
-                    if (x.status === 200) {
-                        console.log("Request success");
-                        var responseText = x.responseText;
-                        var response = null;
-                        response = JSON.parse(responseText);
-                        if (x.getResponseHeader("Content-type") ===
-                            "application/json; charset=utf-8") {
-                            try {
-                                response = JSON.parse(responseText);
-                            } catch (e) {
-                                response = null;
-                                console.warn(
-                                    "Could not parse JSON from " +
-                                    url);
-                            }
-                        }
-                        tries = 1; // reset tries
-                        updateProduct(response);
-                    } else {
-                        console.error(
-                            "Request contained status code: " +
-                            x.status);
-                        if (tries < MAX_TRIES) {
-                            tries++;
-                            doRequest();
-                        } else {
+                if (x.status === 200) {
+                    console.log("Request success");
+                    var responseText = x.responseText;
+                    var response = null;
+                    response = JSON.parse(responseText);
+                    if (x.getResponseHeader("Content-type") ===
+                        "application/json; charset=utf-8") {
+                        try {
+                            response = JSON.parse(responseText);
+                        } catch (e) {
+                            response = null;
                             console.warn(
-                                "Maximum request attempts reached"
-                            );
-                            reject(
-                                "Maximum request attempts reached"
-                            );
+                                "Could not parse JSON from " +
+                                url);
                         }
                     }
+                    tries = 1; // reset tries
+                    updateProduct(response);
+                } else {
+                    console.error(
+                        "Request contained status code: " +
+                        x.status);
+                    if (tries < MAX_TRIES) {
+                        tries++;
+                        doRequest();
+                    } else {
+                        console.warn(
+                            "Maximum request attempts reached"
+                        );
+                        reject(
+                            "Maximum request attempts reached"
+                        );
+                    }
                 }
-                // update product with obj's price and quantity properties
+            }
+            // update product with obj's price and quantity properties
             function updateProduct(obj) {
                 if (obj) {
                     var price;
@@ -255,6 +255,71 @@ function attemptRequest(prod) {
     });
 }
 
+function attemptOrderPOSTRequest() {
+    return new Promise(function(resolve, reject) {
+        var tries = 1;
+        var MAX_TRIES = 5;
+        (function doRequest() {
+            var x = new XMLHttpRequest();
+            var url = "http://localhost:8080/orders";
+            x.open("POST", url);
+            var loader = function() {
+                if (x.status === 200) {
+                    console.log("Request success");
+                    tries = 1; // reset tries
+                } else {
+                    console.error(
+                        "Request contained status code: " +
+                        x.status);
+                    if (tries < MAX_TRIES) {
+                        tries++;
+                        doRequest();
+                    } else {
+                        console.warn(
+                            "Maximum request attempts reached"
+                        );
+                        reject(
+                            "Maximum request attempts reached"
+                        );
+                    }
+                }
+            }
+            x.onabort = function() {
+                console.error("Request aborted");
+            };
+            x.timeout = 1000;
+            x.ontimeout = function() {
+                console.error("Request timed out");
+                loader();
+            };
+            x.onerror = function() {
+                console.error(
+                    "Request contained an error with status code: " +
+                    x.status);
+                loader();
+            };
+            x.setRequestHeader('Content-Type', 'application/json');
+            var cartStr = "{";
+            for (var cartProp in cart) {
+                if (cart.hasOwnProperty(cartProp)) {
+                    cartStr += "\"" + cartProp + "\":" +
+                        cart[cartProp] + ",";
+                }
+            }
+            // remove trailing comma if present
+            if (cartStr[cartStr.length - 1] === ",") {
+                cartStr = cartStr.slice(0, cartStr.length - 1);
+            }
+            cartStr += "}";
+            var retObj = {
+                cart: cartStr,
+                total: getTotalPrice()
+            };
+            x.send(JSON.stringify(retObj));
+        })();
+    });
+}
+
 // Update product thumbnail images using the product variable
 function updateProductImages() {
     // Show product images if available
@@ -301,7 +366,7 @@ function checkoutCart() {
         }
         console.log("old cart");
         console.log(oldCart);
-        attemptRequest(product).then(
+        attemptProductsGETRequest(product).then(
                 // resolved promise
                 function(val) {
                     updateCart();
@@ -314,7 +379,23 @@ function checkoutCart() {
                         ') here.');
                     reject(reason);
                 });
-
+        if (Object.keys(cart).length > 0) {
+            attemptOrderPOSTRequest().then(
+                    // resolved promise
+                    function(val) {
+                        updateCart();
+                    })
+                .catch(
+                    // rejected promise
+                    function(reason) {
+                        alert("Checkout was unavailable. Please try again.");
+                        console.log('Handle rejected promise (' + reason +
+                            ') here.');
+                        reject(reason);
+                    });
+        } else {
+            alert("Please add some items into your cart before checking out.");
+        }
         function updateCart() {
             var cartUpdates = "";
             for (var i = 0; i < oldCart.length; i++) {
@@ -357,7 +438,7 @@ function checkoutCart() {
 
 // On load, start the timer and display the cart total price
 window.onload = function() {
-    attemptRequest(product);
+    attemptProductsGETRequest(product);
     resetTimer();
     updateCartDisplay();
 }
