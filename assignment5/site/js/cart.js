@@ -299,20 +299,8 @@ function attemptOrderPOSTRequest() {
                 loader();
             };
             x.setRequestHeader('Content-Type', 'application/json');
-            var cartStr = "{";
-            for (var cartProp in cart) {
-                if (cart.hasOwnProperty(cartProp)) {
-                    cartStr += "\"" + cartProp + "\":" +
-                        cart[cartProp] + ",";
-                }
-            }
-            // remove trailing comma if present
-            if (cartStr[cartStr.length - 1] === ",") {
-                cartStr = cartStr.slice(0, cartStr.length - 1);
-            }
-            cartStr += "}";
             var retObj = {
-                cart: cartStr,
+                cart: JSON.stringify(cart),
                 total: getTotalPrice()
             };
             x.send(JSON.stringify(retObj));
