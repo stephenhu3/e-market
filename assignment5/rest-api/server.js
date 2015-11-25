@@ -30,6 +30,14 @@ mongoose.connect(mongooseLocalUri, function (error) {
 
 
 var Product = require('./app/models/product');
+
+// TODO: need a function to return the product based on its name
+// function getProductsByName(name){
+//    var query = Product.find({name:"Box1"});
+//    return query;
+// }
+
+
 var Order = require('./app/models/order');
 
 var port = process.env.PORT || 8080; // set our port
@@ -53,6 +61,47 @@ router.get('/api', function(req, res) {
 // on routes that end in /products
 // ----------------------------------------------------
 router.route('/products')
+
+    // update the quantity of each product based on the cart JSON in the body of the request
+    .put(function(req, res) {
+        var products = req.body;
+        // TODO: need to update the quantity of the products
+        for (updateProduct in products) {
+            // console.log(product);
+            // console.log(products[updateProduct]);
+
+            var query = getProductsByName(updateProduct);
+            query.exec(function(err, product){
+               if(err)
+                  return console.log(err);
+            console.log(product.name);
+            });
+
+            // Product.findById(req.params.updateProduct, function(err, product) {
+            
+            // if (err)
+            //     res.send(err);
+
+
+
+            // // set attributes if they're defined in the PUT request
+            // // product.quantity = req.body.quantity - products[updateProduct];
+
+            // // console.log(product.quantity);
+
+            // // save the product
+            // product.save(function(err) {
+            //     if (err)
+            //         res.send(err);
+            //     res.json({ message: 'Product stock successfully updated' });
+            // });
+
+        // });
+        }
+
+
+        
+    })
 
     // create a product (accessed at POST http://localhost:8080/api/products)
     .post(function(req, res) {

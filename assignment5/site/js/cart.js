@@ -153,7 +153,7 @@ function updateInactivityDisplay() {
     document.getElementById("inactivity-counter").innerHTML = inactivityMessage;
 }
 
-function attemptProductsGETRequest(prod) {
+function getProducts(prod) {
     return new Promise(function(resolve, reject) {
         var tries = 1;
         var MAX_TRIES = 5;
@@ -255,7 +255,8 @@ function attemptProductsGETRequest(prod) {
     });
 }
 
-function attemptOrderPOSTRequest() {
+function postOrders() {
+    console.log("post orders ");
     return new Promise(function(resolve, reject) {
         var tries = 1;
         var MAX_TRIES = 5;
@@ -308,6 +309,58 @@ function attemptOrderPOSTRequest() {
     });
 }
 
+function putProducts() {
+    console.log("put products attempt");
+    // Iterate through every item in cart and update the products array through the put request (body has quantity = quantity - cartQuantity)
+    return new Promise(function(resolve, reject) {
+        var tries = 1;
+        var MAX_TRIES = 5;
+        (function doRequest() {
+            var x = new XMLHttpRequest();
+            var url = "http://localhost:8080/products";
+            x.open("PUT", url);
+            var loader = function() {
+                if (x.status === 200) {
+                    console.log("Request success");
+                    tries = 1; // reset tries
+                } else {
+                    console.error(
+                        "Request contained status code: " +
+                        x.status);
+                    if (tries < MAX_TRIES) {
+                        tries++;
+                        doRequest();
+                    } else {
+                        console.warn(
+                            "Maximum request attempts reached"
+                        );
+                        reject(
+                            "Maximum request attempts reached"
+                        );
+                    }
+                }
+            }
+            x.onabort = function() {
+                console.error("Request aborted");
+            };
+            x.timeout = 1000;
+            x.ontimeout = function() {
+                console.error("Request timed out");
+                loader();
+            };
+            x.onerror = function() {
+                console.error(
+                    "Request contained an error with status code: " +
+                    x.status);
+                loader();
+            };
+            x.setRequestHeader('Content-Type', 'application/json');
+            console.log(JSON.stringify(cart));
+            x.send(JSON.stringify(cart));
+        })();
+    });
+}
+
 // Update product thumbnail images using the product variable
 function updateProductImages() {
     // Show product images if available
@@ -352,9 +405,7 @@ function checkoutCart() {
                 oldCart.push(oldItem);
             }
         }
-        console.log("old cart");
-        console.log(oldCart);
-        attemptProductsGETRequest(product).then(
+        getProducts(product).then(
                 // resolved promise
                 function(val) {
                     updateCart();
@@ -368,14 +419,24 @@ function checkoutCart() {
                     reject(reason);
                 });
         if (Object.keys(cart).length > 0) {
-            attemptOrderPOSTRequest().then(
-                    // resolved promise
-                    function(val) {
-                        updateCart();
-                    })
-                .catch(
-                    // rejected promise
-                    function(reason) {
+                postOrders().then( function() {
+                    updateCart();
+                })
+                // rejected promise
+                .catch( function(reason) {
+                    alert("Checkout was unavailable. Please try again.");
+                    console.log('Handle rejected promise (' + reason +
+                        ') here.');
+                    reject(reason);
+                });
+
+                // update product stock based on cart quantities
+                putProducts().then( function(val) {
+                    console.log("putproducts request made");
+                    updateCart();
+                })
+                // rejected promise
+                .catch( function(reason) {
                         alert("Checkout was unavailable. Please try again.");
                         console.log('Handle rejected promise (' + reason +
                             ') here.');
@@ -426,7 +487,7 @@ function checkoutCart() {
 
 // On load, start the timer and display the cart total price
 window.onload = function() {
-    attemptProductsGETRequest(product);
+    getProducts(product);
     resetTimer();
     updateCartDisplay();
 }
