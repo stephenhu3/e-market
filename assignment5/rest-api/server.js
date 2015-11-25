@@ -31,6 +31,9 @@ mongoose.connect(mongooseLocalUri, function (error) {
 
 var Product = require('./app/models/product');
 var Order = require('./app/models/order');
+var User = require('./app/models/user');
+
+var SERVER_AUTH_TOKEN = 42;  // hard-coded user authentication token
 
 var port = process.env.PORT || 8080; // set our port
 
@@ -71,32 +74,39 @@ router.route('/products')
 
     })
 
-    // get all the products (accessed at GET http://localhost:8080/products)
+    // get all the products (accessed at GET http://localhost:8080/products?token=:auth_token)
     .get(function(req, res) {
-        Product.find(function(err, products) {
-            if (err)
-                res.send(err);
+        var user = new User();
+        user.token = req.query.token;
 
-            var productResponse = "{";
+        if (user.token !== SERVER_AUTH_TOKEN) {
+            res.status(401).send();
+        } else {
+            Product.find(function(err, products) {
+                if (err)
+                    res.send(err);
 
-            for (product in products) {
-                if (product == products.length - 1) {
-                    productResponse +=
-                    '"' + products[product].name + '"' + ':{"price":' + products[product].price + ',"quantity":'
-                    + products[product].quantity + ',"url":"'
-                    + products[product].url + '"' + "}";
-                } else {
-                    productResponse +=
-                    '"' + products[product].name + '"' + ':{"price":' + products[product].price + ',"quantity":'
-                    + products[product].quantity + ',"url":"'
-                    + products[product].url + '"' + "},";
+                var productResponse = "{";
+
+                for (product in products) {
+                    if (product == products.length - 1) {
+                        productResponse +=
+                        '"' + products[product].name + '"' + ':{"price":' + products[product].price + ',"quantity":'
+                        + products[product].quantity + ',"url":"'
+                        + products[product].url + '"' + "}";
+                    } else {
+                        productResponse +=
+                        '"' + products[product].name + '"' + ':{"price":' + products[product].price + ',"quantity":'
+                        + products[product].quantity + ',"url":"'
+                        + products[product].url + '"' + "},";
+                    }
                 }
-            }
 
-            productResponse += "}";
-            res.set('Content-Type', 'text/json');
-            res.send(productResponse);
-        });
+                productResponse += "}";
+                res.set('Content-Type', 'text/json');
+                res.send(productResponse);
+            });
+        }
     });
 
 router.route('/products/:product_id')
@@ -153,42 +163,53 @@ router.route('/orders')
         var order = new Order();      // create a new instance of the Order model
         order.cart = req.body.cart;
         order.total = req.body.total;
+        order.user = req.body.user;
 
-        // save the order and check for errors
-        order.save(function(err) {
-            if (err)
-                res.send(err);
-            res.json({ message: 'Order successfully created' });
-        });
-
+        if (order.user.token !== SERVER_AUTH_TOKEN) {
+            res.status(401).send();
+        } else {
+            // save the order and check for errors
+            order.save(function(err) {
+                if (err)
+                    res.send(err);
+                res.json({ message: 'Order successfully created' });
+            });
+        }
     })
 
-    // get all the orders (accessed at GET http://localhost:8080/orders)
+    // get all the orders (accessed at GET http://localhost:8080/orders?token=:auth_token)
     .get(function(req, res) {
-        Order.find(function(err, orders) {
-            if (err) {
-                res.send(err);
-            }
-            var orderResponse = "{";
-            var orderCount = 0;
-            for (order in orders) {
-                if (order == orders.length - 1) {
-                    orderResponse +=
-                    '"order' + orderCount + '":{"cart":' +
-                    JSON.stringify(orders[order].cart) + ',"total":' +
-                    orders[order].total + "}";
-                } else {
-                    orderResponse +=
-                    '"order' + orderCount + '":{"cart":' +
-                    JSON.stringify(orders[order].cart) + ',"total":' +
-                    orders[order].total + "},";
+        var user = new User();
+        user.token = req.query.token;
+
+        if (user.token !== SERVER_AUTH_TOKEN) {
+            res.status(401).send();
+        } else {
+            Order.find(function(err, orders) {
+                if (err) {
+                    res.send(err);
                 }
-                orderCount++;
-            }
-            orderResponse += "}";
-            res.set('Content-Type', 'text/json');
-            res.send(orderResponse);
-        });
+                var orderResponse = "{";
+                var orderCount = 0;
+                for (order in orders) {
+                    if (order == orders.length - 1) {
+                        orderResponse +=
+                        '"order' + orderCount + '":{"cart":' +
+                        JSON.stringify(orders[order].cart) + ',"total":' +
+                        orders[order].total + "}";
+                    } else {
+                        orderResponse +=
+                        '"order' + orderCount + '":{"cart":' +
+                        JSON.stringify(orders[order].cart) + ',"total":' +
+                        orders[order].total + "},";
+                    }
+                    orderCount++;
+                }
+                orderResponse += "}";
+                res.set('Content-Type', 'text/json');
+                res.send(orderResponse);
+            });
+        }
     });
 
 router.route('/orders/:order_id')

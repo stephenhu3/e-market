@@ -6,6 +6,9 @@ var cart = {};
 // Updated using an AJAX call to the server
 var product = {};
 
+// Hard-coded authentication token to send to the server
+var USER_AUTH_TOKEN = 42;
+
 /* Map from displayed product names to the product prices table
    Provides flexibility for the displayed product name in the view
    to differ from the model's product name representation */
@@ -159,7 +162,7 @@ function attemptProductsGETRequest(prod) {
         var MAX_TRIES = 5;
         (function doRequest() {
             var x = new XMLHttpRequest();
-            var url = "http://localhost:8080/products";
+            var url = "http://localhost:8080/products?token=" + USER_AUTH_TOKEN;
             x.open("GET", url);
             var loader = function() {
                 if (x.status === 200) {
@@ -313,7 +316,10 @@ function attemptOrderPOSTRequest() {
             cartStr += "}";
             var retObj = {
                 cart: cartStr,
-                total: getTotalPrice()
+                total: getTotalPrice(),
+                user: {
+                    token: USER_AUTH_TOKEN
+                }
             };
             x.send(JSON.stringify(retObj));
         })();
