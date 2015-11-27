@@ -59,8 +59,6 @@ function decrementProductStock(name, decrement) {
 var Order = require('./app/models/order');
 var User = require('./app/models/user');
 
-var SERVER_AUTH_TOKEN = 42; // hard-coded user authentication token
-
 var port = process.env.PORT || 8080; // set our port
 
 // ROUTES FOR OUR API
@@ -89,17 +87,31 @@ router.route('/products')
 .put(function(req, res) {
     var products = req.body;
 
-    for (updateProduct in products) {
-        if (decrementProductStock(updateProduct, products[updateProduct]) <
-            1) {
-            res.json({
-                message: 'Error: Product not found trying to update quantity'
-            });
-        }
-    }
+    var user = new User();
+    user.token = req.query.token;
 
-    res.json({
-        message: 'All product quantities updated successfully'
+    User.find(function(err, users) {
+        if (err) {
+            res.send(err);
+        }
+        for (var userIndex in users) {
+            if (user.token === users[userIndex].token) {
+                for (updateProduct in products) {
+                    if (decrementProductStock(updateProduct, products[updateProduct]) <
+                        1) {
+                        res.json({
+                            message: 'Error: Product not found trying to update quantity'
+                        });
+                    }
+                }
+
+                res.json({
+                    message: 'All product quantities updated successfully'
+                });
+                return;
+            }
+        }
+        res.status(401).send();
     });
 })
 
@@ -111,15 +123,28 @@ router.route('/products')
     product.quantity = req.body.quantity;
     product.url = req.body.url;
 
-    // save the product and check for errors
-    product.save(function(err) {
-        if (err)
-            res.send(err);
-        res.json({
-            message: 'Product successfully created'
-        });
-    });
+    var user = new User();
+    user.token = req.query.token;
 
+    User.find(function(err, users) {
+        if (err) {
+            res.send(err);
+        }
+        for (var userIndex in users) {
+            if (user.token === users[userIndex].token) {
+                // save the product and check for errors
+                product.save(function(err) {
+                    if (err)
+                        res.send(err);
+                    res.json({
+                        message: 'Product successfully created'
+                    });
+                });
+                return;
+            }
+        }
+        res.status(401).send();
+    });
 })
 
 // get all the products (accessed at GET http://localhost:8080/products?token=:auth_token)
@@ -127,34 +152,41 @@ router.route('/products')
     var user = new User();
     user.token = req.query.token;
 
-    if (user.token !== SERVER_AUTH_TOKEN) {
-        res.status(401).send();
-    } else {
-        Product.find(function(err, products) {
-            if (err)
-                res.send(err);
+    User.find(function(err, users) {
+        if (err) {
+            res.send(err);
+        }
+        for (var userIndex in users) {
+            if (user.token === users[userIndex].token) {
+                Product.find(function(err, products) {
+                    if (err)
+                        res.send(err);
 
-            var productResponse = "{";
+                    var productResponse = "{";
 
-            for (product in products) {
-                if (product == products.length - 1) {
-                    productResponse +=
-                    '"' + products[product].name + '"' + ':{"price":' + products[product].price + ',"quantity":'
-                    + products[product].quantity + ',"url":"'
-                    + products[product].url + '"' + "}";
-                } else {
-                    productResponse +=
-                    '"' + products[product].name + '"' + ':{"price":' + products[product].price + ',"quantity":'
-                    + products[product].quantity + ',"url":"'
-                    + products[product].url + '"' + "},";
-                }
+                    for (product in products) {
+                        if (product == products.length - 1) {
+                            productResponse +=
+                            '"' + products[product].name + '"' + ':{"price":' + products[product].price + ',"quantity":'
+                            + products[product].quantity + ',"url":"'
+                            + products[product].url + '"' + "}";
+                        } else {
+                            productResponse +=
+                            '"' + products[product].name + '"' + ':{"price":' + products[product].price + ',"quantity":'
+                            + products[product].quantity + ',"url":"'
+                            + products[product].url + '"' + "},";
+                        }
+                    }
+
+                    productResponse += "}";
+                    res.set('Content-Type', 'text/json');
+                    res.send(productResponse);
+                });
+                return;
             }
-
-            productResponse += "}";
-            res.set('Content-Type', 'text/json');
-            res.send(productResponse);
-        });
-    }
+        }
+        res.status(401).send();
+    });
 });
 
 router.route('/products/:product_id')
@@ -219,18 +251,25 @@ router.route('/orders')
     order.total = req.body.total;
     order.user = req.body.user;
 
-    if (order.user.token !== SERVER_AUTH_TOKEN) {
+    User.find(function(err, users) {
+        if (err) {
+            res.send(err);
+        }
+        for (var userIndex in users) {
+            if (order.user.token === users[userIndex].token) {
+                // save the order and check for errors
+                order.save(function(err) {
+                    if (err)
+                        res.send(err);
+                    res.json({
+                        message: 'Order successfully created'
+                    });
+                });
+                return;
+            }
+        }
         res.status(401).send();
-    } else {
-        // save the order and check for errors
-        order.save(function(err) {
-            if (err)
-                res.send(err);
-            res.json({
-                message: 'Order successfully created'
-            });
-        });
-    }
+    });
 })
 
 // get all the orders (accessed at GET http://localhost:8080/orders?token=:auth_token)
@@ -238,34 +277,41 @@ router.route('/orders')
     var user = new User();
     user.token = req.query.token;
 
-    if (user.token !== SERVER_AUTH_TOKEN) {
+    User.find(function(err, users) {
+        if (err) {
+            res.send(err);
+        }
+        for (var userIndex in users) {
+            if (user.token === users[userIndex].token) {
+                Order.find(function(err, orders) {
+                    if (err) {
+                        res.send(err);
+                    }
+                    var orderResponse = "{";
+                    var orderCount = 0;
+                    for (order in orders) {
+                        if (order == orders.length - 1) {
+                            orderResponse +=
+                                '"order' + orderCount + '":{"cart":' +
+                                JSON.stringify(orders[order].cart) + ',"total":' +
+                                orders[order].total + "}";
+                        } else {
+                            orderResponse +=
+                                '"order' + orderCount + '":{"cart":' +
+                                JSON.stringify(orders[order].cart) + ',"total":' +
+                                orders[order].total + "},";
+                        }
+                        orderCount++;
+                    }
+                    orderResponse += "}";
+                    res.set('Content-Type', 'text/json');
+                    res.send(orderResponse);
+                });
+                return;
+            }
+        }
         res.status(401).send();
-    } else {
-        Order.find(function(err, orders) {
-            if (err) {
-                res.send(err);
-            }
-            var orderResponse = "{";
-            var orderCount = 0;
-            for (order in orders) {
-                if (order == orders.length - 1) {
-                    orderResponse +=
-                        '"order' + orderCount + '":{"cart":' +
-                        JSON.stringify(orders[order].cart) + ',"total":' +
-                        orders[order].total + "}";
-                } else {
-                    orderResponse +=
-                        '"order' + orderCount + '":{"cart":' +
-                        JSON.stringify(orders[order].cart) + ',"total":' +
-                        orders[order].total + "},";
-                }
-                orderCount++;
-            }
-            orderResponse += "}";
-            res.set('Content-Type', 'text/json');
-            res.send(orderResponse);
-        });
-    }
+    });
 });
 
 router.route('/orders/:order_id')

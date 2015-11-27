@@ -264,7 +264,7 @@ function postOrders() {
         var MAX_TRIES = 5;
         (function doRequest() {
             var x = new XMLHttpRequest();
-            var url = "http://localhost:8080/orders";
+            var url = "http://localhost:8080/orders?token=" + USER_AUTH_TOKEN;
             x.open("POST", url);
             var loader = function() {
                 if (x.status === 200) {
@@ -321,7 +321,7 @@ function putProducts() {
         var MAX_TRIES = 5;
         (function doRequest() {
             var x = new XMLHttpRequest();
-            var url = "http://localhost:8080/products";
+            var url = "http://localhost:8080/products?token=" + USER_AUTH_TOKEN;
             x.open("PUT", url);
             var loader = function() {
                 if (x.status === 200) {
