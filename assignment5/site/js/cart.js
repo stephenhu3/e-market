@@ -163,6 +163,7 @@ function getProducts(prod) {
         (function doRequest() {
             var x = new XMLHttpRequest();
             var url = "http://localhost:8080/products?token=" + USER_AUTH_TOKEN;
+            // var sandboxUrl = "https://cpen400a.herokuapp.com/products";
             x.open("GET", url);
             var loader = function() {
                     if (x.status === 200) {
@@ -176,27 +177,19 @@ function getProducts(prod) {
                                 response = JSON.parse(responseText);
                             } catch (e) {
                                 response = null;
-                                console.warn(
-                                    "Could not parse JSON from " +
-                                    url);
+                                console.warn("Could not parse JSON from " + url);
                             }
                         }
                         tries = 1; // reset tries
                         updateProduct(response);
                     } else {
-                        console.error(
-                            "Request contained status code: " +
-                            x.status);
+                        console.error("Request contained status code: " + x.status);
                         if (tries < MAX_TRIES) {
                             tries++;
                             doRequest();
                         } else {
-                            console.warn(
-                                "Maximum request attempts reached"
-                            );
-                            reject(
-                                "Maximum request attempts reached"
-                            );
+                            console.warn("Maximum request attempts reached");
+                            reject("Maximum request attempts reached");
                         }
                     }
                 }
@@ -249,8 +242,7 @@ function getProducts(prod) {
             };
             x.onerror = function() {
                 console.error(
-                    "Request contained an error with status code: " +
-                    x.status);
+                    "Request contained an error with status code: " + x.status);
                 loader();
             };
             x.send();
@@ -260,8 +252,6 @@ function getProducts(prod) {
 
 function postOrders() {
     return new Promise(function(resolve, reject) {
-        var tries = 1;
-        var MAX_TRIES = 5;
         (function doRequest() {
             var x = new XMLHttpRequest();
             var url = "http://localhost:8080/orders?token=" + USER_AUTH_TOKEN;
@@ -269,36 +259,20 @@ function postOrders() {
             var loader = function() {
                 if (x.status === 200) {
                     console.log("Request success");
-                    tries = 1; // reset tries
                 } else {
-                    console.error(
-                        "Request contained status code: " +
-                        x.status);
-                    if (tries < MAX_TRIES) {
-                        tries++;
-                        doRequest();
-                    } else {
-                        console.warn(
-                            "Maximum request attempts reached"
-                        );
-                        reject(
-                            "Maximum request attempts reached"
-                        );
-                    }
+                    console.error("Request contained status code: " + x.status);
                 }
             }
             x.onabort = function() {
                 console.error("Request aborted");
             };
-            x.timeout = 1000;
+            x.timeout = 5000;
             x.ontimeout = function() {
                 console.error("Request timed out");
                 loader();
             };
             x.onerror = function() {
-                console.error(
-                    "Request contained an error with status code: " +
-                    x.status);
+                console.error("Request contained an error with status code: " + x.status);
                 loader();
             };
             x.setRequestHeader('Content-Type', 'application/json');
@@ -318,8 +292,6 @@ function postOrders() {
 // Update the product stock for each product in user's cart based on their purchase
 function putProducts() {
     return new Promise(function(resolve, reject) {
-        var tries = 1;
-        var MAX_TRIES = 5;
         (function doRequest() {
             var x = new XMLHttpRequest();
             var url = "http://localhost:8080/products?token=" + USER_AUTH_TOKEN;
@@ -327,36 +299,20 @@ function putProducts() {
             var loader = function() {
                 if (x.status === 200) {
                     console.log("Request success");
-                    tries = 1; // reset tries
                 } else {
-                    console.error(
-                        "Request contained status code: " +
-                        x.status);
-                    if (tries < MAX_TRIES) {
-                        tries++;
-                        doRequest();
-                    } else {
-                        console.warn(
-                            "Maximum request attempts reached"
-                        );
-                        reject(
-                            "Maximum request attempts reached"
-                        );
-                    }
+                    console.error("Request contained status code: " + x.status);
                 }
             }
             x.onabort = function() {
                 console.error("Request aborted");
             };
-            x.timeout = 1000;
+            x.timeout = 5000;
             x.ontimeout = function() {
                 console.error("Request timed out");
                 loader();
             };
             x.onerror = function() {
-                console.error(
-                    "Request contained an error with status code: " +
-                    x.status);
+                console.error("Request contained an error with status code: " + x.status);
                 loader();
             };
             x.setRequestHeader('Content-Type', 'application/json');
@@ -386,8 +342,7 @@ function updateProductImages() {
                     });
                 foundProduct.siblings(".box")
                     .css("background", "11px 0px/225px 225px url(" +
-                        product[key]["url"] +
-                        ") no-repeat");
+                        product[key]["url"] + ") no-repeat");
             }
         }
     }
@@ -399,28 +354,16 @@ function checkoutCart() {
     // update cart contents prices and alert to user the updated prices
     // update cart quantities (remove if 0, reduce if existing stock less than requested)
     return new Promise(function(resolve, reject) {
-        var oldCart = [];
-        for (var item in cart) {
-            if (product.hasOwnProperty(item)) {
-                var oldItem = {
-                    'name': productDisplayNames.toDisplayName(item),
-                    'price': product[item].price,
-                    'quantity': product[item].quantity
-                }
-                oldCart.push(oldItem);
-            }
-        }
+        
         if (Object.keys(cart).length > 0) {
             // update product stock based on cart quantities
             putProducts().then(function(val) {
                 console.log("putProducts resolved");
-                getProducts(product).then(
-                    // resolved promise
-                    function(val) {
-                        console.log("getProducts resolved");
+                // resolved promise
+                getProducts(product).then(function(val) {
                         updateCart();
                         postOrders().then(function() {
-                            console.log("postOrders resolved");
+                            console.log("Order posted successfully");
                         })
                         // rejected promise
                         .catch(function(reason) {
@@ -438,7 +381,6 @@ function checkoutCart() {
                         console.log('Handle rejected promise (' + reason + ') here.');
                         reject(reason);
                     });
-
                 })
                 // rejected promise
                 .catch(function(reason) {
@@ -453,40 +395,50 @@ function checkoutCart() {
         }
 
         function updateCart() {
-            var cartUpdates = "";
-            for (var i = 0; i < oldCart.length; i++) {
-                var updateItem = product[productDisplayNames[oldCart[i]
-                    .name]];
-                var oldItem = oldCart[i];
-                if (updateItem &&
-                    updateItem.hasOwnProperty("price") &&
-                    updateItem.hasOwnProperty("quantity")) {
-                    if (updateItem.quantity === 0) {
-                        // remove item from cart
-                        delete cart[productDisplayNames[oldItem.name]];
-                        cartUpdates += oldItem.name +
-                            ": Out of stock for this item. It has been removed from your cart.\n";
-                        break;
-                    } else if (oldItem.quantity > updateItem.quantity) {
-                        // update cart quantity for item
-                        var oldCartQuantity = cart[productDisplayNames[
-                            oldItem.name]];
-                        cart[productDisplayNames[oldItem.name]] =
-                            updateItem.quantity;
-                        cartUpdates += oldItem.name +
-                            ": Item stock low. Your quantity has changed from " +
-                            oldCartQuantity + " to " + updateItem.quantity +
-                            ".\n";
+            var oldCart = [];
+            for (var item in cart) {
+                if (product.hasOwnProperty(item)) {
+                    var oldItem = {
+                        'name': productDisplayNames.toDisplayName(item),
+                        'price': product[item].price,
+                        'quantity': product[item].quantity
                     }
-                    if (oldItem.price != updateItem.price) {
-                        cartUpdates += oldItem.name +
-                            ": Item price has changed from $" + oldItem
-                            .price + " to $" + updateItem.price + ".\n";
-                    }
+                    oldCart.push(oldItem);
                 }
             }
-            cartUpdates.length > 0 ? alert(cartUpdates) : null;
-            resolve("Cart has successfully updated");
+            getProducts(product).then(function() {
+                var cartUpdates = "";
+                for (var i = 0; i < oldCart.length; i++) {
+                    var updateItem = product[productDisplayNames[oldCart[i].name]];
+                    var oldItem = oldCart[i];
+                    if (updateItem &&
+                        updateItem.hasOwnProperty("price") &&
+                        updateItem.hasOwnProperty("quantity")) {
+                        if (updateItem.quantity <= 0) {
+                            // remove item from cart
+                            delete cart[productDisplayNames[oldItem.name]];
+                            cartUpdates += oldItem.name + ": Out of stock for this item. It has been removed from your cart.\n";
+                            break;
+                        }
+                        // else if (oldItem.quantity > updateItem.quantity) {
+                        //     // update cart quantity for item
+                        //     var oldCartQuantity = cart[productDisplayNames[oldItem.name]];
+                        //     cart[productDisplayNames[oldItem.name]] = updateItem.quantity;
+                        //     cartUpdates += oldItem.name +
+                        //         ": Item stock low. Your quantity has changed from " +
+                        //         oldCartQuantity + " to " + updateItem.quantity +
+                        //         ".\n";
+                        // }
+                        if (oldItem.price != updateItem.price) {
+                            cartUpdates += oldItem.name +
+                                ": Item price has changed from $" + oldItem
+                                .price + " to $" + updateItem.price + ".\n";
+                        }
+                    }
+                }
+                cartUpdates.length > 0 ? alert(cartUpdates) : null;
+                resolve("Cart has successfully updated");
+            });
         }
     })
 };
