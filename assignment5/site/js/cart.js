@@ -418,10 +418,9 @@ function checkoutCart() {
                     // resolved promise
                     function(val) {
                         console.log("getProducts resolved");
-                        // updateCart();
+                        updateCart();
                         postOrders().then(function() {
                             console.log("postOrders resolved");
-                            updateCart();
                         })
                         // rejected promise
                         .catch(function(reason) {
