@@ -304,7 +304,7 @@ function postOrders() {
             x.setRequestHeader('Content-Type', 'application/json');
             var retObj = {
                 cart: JSON.stringify(cart),
-                total: getTotalPrice()
+                total: getTotalPrice(),
                 user: {
                     token: USER_AUTH_TOKEN
                 }
