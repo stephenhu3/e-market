@@ -310,6 +310,7 @@ function postOrders() {
                 }
             };
             x.send(JSON.stringify(retObj));
+            resolve("Order successfully posted");
         })();
     });
 }
@@ -360,6 +361,7 @@ function putProducts() {
             };
             x.setRequestHeader('Content-Type', 'application/json');
             x.send(JSON.stringify(cart));
+            resolve("Products successfully updated");
         })();
     });
 }
@@ -408,54 +410,48 @@ function checkoutCart() {
                 oldCart.push(oldItem);
             }
         }
-        getProducts(product).then(
-                // resolved promise
-                function(val) {
-                    updateCart();
-                    if (Object.keys(cart).length > 0) {
+        if (Object.keys(cart).length > 0) {
+            // update product stock based on cart quantities
+            putProducts().then(function(val) {
+                console.log("putProducts resolved");
+                getProducts(product).then(
+                    // resolved promise
+                    function(val) {
+                        console.log("getProducts resolved");
+                        // updateCart();
                         postOrders().then(function() {
-                                updateCart();
-                            })
-                            // rejected promise
-                            .catch(function(reason) {
-                                alert(
-                                    "Checkout was unavailable. Please try again."
-                                );
-                                console.log('Handle rejected promise (' +
-                                    reason +
-                                    ') here.');
-                                reject(reason);
-                            });
+                            console.log("postOrders resolved");
+                            updateCart();
+                        })
+                        // rejected promise
+                        .catch(function(reason) {
+                            alert("Checkout was unavailable. Please try again.");
+                            console.log('Handle rejected promise (' + reason + ') here.');
+                            reject(reason);
+                        });
 
-                        // update product stock based on cart quantities
-                        putProducts().then(function(val) {
-                                console.log("putproducts request made");
-                                updateCart();
-                            })
-                            // rejected promise
-                            .catch(function(reason) {
-                                alert(
-                                    "Checkout was unavailable. Please try again."
-                                );
-                                console.log('Handle rejected promise (' +
-                                    reason +
-                                    ') here.');
-                                reject(reason);
-                            });
-                    } else {
-                        alert(
-                            "Please add some items into your cart before checking out."
-                        );
-                    }
+
+                    })
+                .catch(
+                    // rejected promise
+                    function(reason) {
+                        alert("Checkout was unavailable. Please try again.");
+                        console.log('Handle rejected promise (' + reason + ') here.');
+                        reject(reason);
+                    });
+
                 })
-            .catch(
                 // rejected promise
-                function(reason) {
+                .catch(function(reason) {
                     alert("Checkout was unavailable. Please try again.");
-                    console.log('Handle rejected promise (' + reason +
-                        ') here.');
+                    console.log('Handle rejected promise (' + reason + ') here.');
                     reject(reason);
                 });
+        } else {
+            alert(
+                "Please add some items into your cart before checking out."
+            );
+        }
 
         function updateCart() {
             var cartUpdates = "";
