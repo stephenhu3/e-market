@@ -83,7 +83,9 @@ router.get('/api', function(req, res) {
 // ----------------------------------------------------
 router.route('/products')
 
+// [Basic Authentication Required]
 // update the quantity of each product based on the cart JSON in the body of the request
+// (accessed at POST http://localhost:8080/api/products?token=:auth_token)
 .put(function(req, res) {
     var products = req.body;
 
@@ -115,7 +117,8 @@ router.route('/products')
     });
 })
 
-// create a product (accessed at POST http://localhost:8080/api/products)
+// [Basic Authentication Required]
+// create a product (accessed at POST http://localhost:8080/api/products?token=:auth_token)
 .post(function(req, res) {
     var product = new Product(); // create a new instance of the Product model
     product.name = req.body.name;
@@ -147,6 +150,7 @@ router.route('/products')
     });
 })
 
+// [Basic Authentication Required]
 // get all the products (accessed at GET http://localhost:8080/products?token=:auth_token)
 .get(function(req, res) {
     var user = new User();
@@ -209,10 +213,8 @@ router.route('/products/:product_id')
 
         // set attributes if they're defined in the PUT request
         product.name = req.body.name ? req.body.name : product.name;
-        product.price = req.body.price ? req.body.price :
-            product.price;
-        product.quantity = req.body.quantity ? req.body.quantity :
-            product.quantity;
+        product.price = req.body.price ? req.body.price : product.price;
+        product.quantity = req.body.quantity ? req.body.quantity : product.quantity;
         product.url = req.body.url ? req.body.url : product.url;
 
         // save the product
@@ -244,7 +246,8 @@ router.route('/products/:product_id')
 // ----------------------------------------------------
 router.route('/orders')
 
-// create a order (accessed at POST http://localhost:8080/orders)
+// [Basic Authentication Required]
+// create a order (accessed at POST http://localhost:8080/orders?token=:auth_token)
 .post(function(req, res) {
     var order = new Order(); // create a new instance of the Order model
     order.cart = req.body.cart;
@@ -272,6 +275,7 @@ router.route('/orders')
     });
 })
 
+// [Basic Authentication Required]
 // get all the orders (accessed at GET http://localhost:8080/orders?token=:auth_token)
 .get(function(req, res) {
     var user = new User();
@@ -358,6 +362,34 @@ router.route('/orders/:order_id')
         res.json({
             message: 'Order successfully deleted'
         });
+    });
+});
+
+// on routes that end in /users
+// ----------------------------------------------------
+router.route('/users')
+
+// create a user (accessed at POST http://localhost:8080/api/users)
+.post(function(req, res) {
+    var user = new User(); // create a new instance of the User model
+    user.token = req.body.token;
+
+    // save the user and check for errors
+    user.save(function(err) {
+        if (err)
+            res.send(err);
+        res.json({
+            message: 'User successfully created'
+        });
+    });
+})
+
+// get all the users (accessed at GET http://localhost:8080/api/users)
+.get(function(req, res) {
+    User.find(function(err, users) {
+        if (err)
+            res.send(err);
+        res.json(users);
     });
 });
 
