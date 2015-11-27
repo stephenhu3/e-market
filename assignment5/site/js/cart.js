@@ -162,42 +162,42 @@ function getProducts(prod) {
             var url = "http://localhost:8080/products";
             x.open("GET", url);
             var loader = function() {
-                if (x.status === 200) {
-                    console.log("Request success");
-                    var responseText = x.responseText;
-                    var response = null;
-                    response = JSON.parse(responseText);
-                    if (x.getResponseHeader("Content-type") ===
-                        "application/json; charset=utf-8") {
-                        try {
-                            response = JSON.parse(responseText);
-                        } catch (e) {
-                            response = null;
+                    if (x.status === 200) {
+                        console.log("Request success");
+                        var responseText = x.responseText;
+                        var response = null;
+                        response = JSON.parse(responseText);
+                        if (x.getResponseHeader("Content-type") ===
+                            "application/json; charset=utf-8") {
+                            try {
+                                response = JSON.parse(responseText);
+                            } catch (e) {
+                                response = null;
+                                console.warn(
+                                    "Could not parse JSON from " +
+                                    url);
+                            }
+                        }
+                        tries = 1; // reset tries
+                        updateProduct(response);
+                    } else {
+                        console.error(
+                            "Request contained status code: " +
+                            x.status);
+                        if (tries < MAX_TRIES) {
+                            tries++;
+                            doRequest();
+                        } else {
                             console.warn(
-                                "Could not parse JSON from " +
-                                url);
+                                "Maximum request attempts reached"
+                            );
+                            reject(
+                                "Maximum request attempts reached"
+                            );
                         }
                     }
-                    tries = 1; // reset tries
-                    updateProduct(response);
-                } else {
-                    console.error(
-                        "Request contained status code: " +
-                        x.status);
-                    if (tries < MAX_TRIES) {
-                        tries++;
-                        doRequest();
-                    } else {
-                        console.warn(
-                            "Maximum request attempts reached"
-                        );
-                        reject(
-                            "Maximum request attempts reached"
-                        );
-                    }
                 }
-            }
-            // update product with obj's price and quantity properties
+                // update product with obj's price and quantity properties
             function updateProduct(obj) {
                 if (obj) {
                     var price;
@@ -256,7 +256,6 @@ function getProducts(prod) {
 }
 
 function postOrders() {
-    console.log("post orders ");
     return new Promise(function(resolve, reject) {
         var tries = 1;
         var MAX_TRIES = 5;
@@ -309,9 +308,8 @@ function postOrders() {
     });
 }
 
+// Update the product stock for each product in user's cart based on their purchase
 function putProducts() {
-    console.log("put products attempt");
-    // Iterate through every item in cart and update the products array through the put request (body has quantity = quantity - cartQuantity)
     return new Promise(function(resolve, reject) {
         var tries = 1;
         var MAX_TRIES = 5;
@@ -355,7 +353,6 @@ function putProducts() {
                 loader();
             };
             x.setRequestHeader('Content-Type', 'application/json');
-            console.log(JSON.stringify(cart));
             x.send(JSON.stringify(cart));
         })();
     });
@@ -378,11 +375,11 @@ function updateProductImages() {
                         return foundProducts[index].innerHTML ===
                             productDisplayNames.toDisplayName(
                                 key);
-                });
+                    });
                 foundProduct.siblings(".box")
                     .css("background", "11px 0px/225px 225px url(" +
-                            product[key]["url"] +
-                            ") no-repeat");
+                        product[key]["url"] +
+                        ") no-repeat");
             }
         }
     }
@@ -419,32 +416,41 @@ function checkoutCart() {
                     reject(reason);
                 });
         if (Object.keys(cart).length > 0) {
-                postOrders().then( function() {
+            postOrders().then(function() {
                     updateCart();
                 })
                 // rejected promise
-                .catch( function(reason) {
-                    alert("Checkout was unavailable. Please try again.");
-                    console.log('Handle rejected promise (' + reason +
+                .catch(function(reason) {
+                    alert(
+                        "Checkout was unavailable. Please try again."
+                    );
+                    console.log('Handle rejected promise (' +
+                        reason +
                         ') here.');
                     reject(reason);
                 });
 
-                // update product stock based on cart quantities
-                putProducts().then( function(val) {
+            // update product stock based on cart quantities
+            putProducts().then(function(val) {
                     console.log("putproducts request made");
                     updateCart();
                 })
                 // rejected promise
-                .catch( function(reason) {
-                        alert("Checkout was unavailable. Please try again.");
-                        console.log('Handle rejected promise (' + reason +
-                            ') here.');
-                        reject(reason);
-                    });
+                .catch(function(reason) {
+                    alert(
+                        "Checkout was unavailable. Please try again."
+                    );
+                    console.log('Handle rejected promise (' +
+                        reason +
+                        ') here.');
+                    reject(reason);
+                });
         } else {
-            alert("Please add some items into your cart before checking out.");
+            alert(
+                "Please add some items into your cart before checking out."
+            );
         }
+
         function updateCart() {
             var cartUpdates = "";
             for (var i = 0; i < oldCart.length; i++) {
