@@ -354,33 +354,31 @@ function checkoutCart() {
     // update cart contents prices and alert to user the updated prices
     // update cart quantities (remove if 0, reduce if existing stock less than requested)
     return new Promise(function(resolve, reject) {
-        
+
         if (Object.keys(cart).length > 0) {
             // update product stock based on cart quantities
-            putProducts().then(function(val) {
-                console.log("putProducts resolved");
-                // resolved promise
-                getProducts(product).then(function(val) {
-                        updateCart();
-                        postOrders().then(function() {
-                            console.log("Order posted successfully");
+            getProducts(product).then(function(val) {
+                    updateCart();
+                    putProducts().then(function(val) {
+                            console.log("putProducts resolved");
+                            // resolved promise
+                            postOrders().then(function() {
+                                    console.log("Order posted successfully");
+                                })
+                                // rejected promise
+                                .catch(function(reason) {
+                                    alert("Checkout was unavailable. Please try again.");
+                                    console.log('Handle rejected promise (' + reason + ') here.');
+                                    reject(reason);
+                                });
                         })
-                        // rejected promise
-                        .catch(function(reason) {
-                            alert("Checkout was unavailable. Please try again.");
-                            console.log('Handle rejected promise (' + reason + ') here.');
-                            reject(reason);
-                        });
-
-
-                    })
-                .catch(
-                    // rejected promise
-                    function(reason) {
-                        alert("Checkout was unavailable. Please try again.");
-                        console.log('Handle rejected promise (' + reason + ') here.');
-                        reject(reason);
-                    });
+                        .catch(
+                            // rejected promise
+                            function(reason) {
+                                alert("Checkout was unavailable. Please try again.");
+                                console.log('Handle rejected promise (' + reason + ') here.');
+                                reject(reason);
+                            });
                 })
                 // rejected promise
                 .catch(function(reason) {
@@ -401,44 +399,41 @@ function checkoutCart() {
                     var oldItem = {
                         'name': productDisplayNames.toDisplayName(item),
                         'price': product[item].price,
-                        'quantity': product[item].quantity
+                        'quantity': cart[item]
                     }
                     oldCart.push(oldItem);
                 }
             }
-            getProducts(product).then(function() {
-                var cartUpdates = "";
-                for (var i = 0; i < oldCart.length; i++) {
-                    var updateItem = product[productDisplayNames[oldCart[i].name]];
-                    var oldItem = oldCart[i];
-                    if (updateItem &&
-                        updateItem.hasOwnProperty("price") &&
-                        updateItem.hasOwnProperty("quantity")) {
-                        if (updateItem.quantity <= 0) {
-                            // remove item from cart
-                            delete cart[productDisplayNames[oldItem.name]];
-                            cartUpdates += oldItem.name + ": Out of stock for this item. It has been removed from your cart.\n";
-                            break;
-                        }
-                        // else if (oldItem.quantity > updateItem.quantity) {
-                        //     // update cart quantity for item
-                        //     var oldCartQuantity = cart[productDisplayNames[oldItem.name]];
-                        //     cart[productDisplayNames[oldItem.name]] = updateItem.quantity;
-                        //     cartUpdates += oldItem.name +
-                        //         ": Item stock low. Your quantity has changed from " +
-                        //         oldCartQuantity + " to " + updateItem.quantity +
-                        //         ".\n";
-                        // }
-                        if (oldItem.price != updateItem.price) {
-                            cartUpdates += oldItem.name +
-                                ": Item price has changed from $" + oldItem
-                                .price + " to $" + updateItem.price + ".\n";
-                        }
+            var cartUpdates = "";
+            for (var i = 0; i < oldCart.length; i++) {
+                var updateItem = product[productDisplayNames[oldCart[i].name]];
+                var oldItem = oldCart[i];
+                if (updateItem &&
+                    updateItem.hasOwnProperty("price") &&
+                    updateItem.hasOwnProperty("quantity")) {
+                    if (updateItem.quantity == 0) {
+                        // remove item from cart
+                        delete cart[productDisplayNames[oldItem.name]];
+                        cartUpdates += oldItem.name + ": Out of stock for this item. It has been removed from your cart.\n";
+                        break;
+                    } else if (oldItem.quantity > updateItem.quantity) {
+                        // update cart quantity for item
+                        var oldCartQuantity = cart[productDisplayNames[oldItem.name]];
+                        cart[productDisplayNames[oldItem.name]] = updateItem.quantity;
+                        cartUpdates += oldItem.name +
+                            ": Item stock low. Your quantity has changed from " +
+                            oldCartQuantity + " to " + updateItem.quantity +
+                            ".\n";
+                    }
+                    if (oldItem.price != updateItem.price) {
+                        cartUpdates += oldItem.name +
+                            ": Item price has changed from $" + oldItem
+                            .price + " to $" + updateItem.price + ".\n";
                     }
                 }
-                cartUpdates.length > 0 ? alert(cartUpdates) : null;
-                resolve("Cart has successfully updated");
-            });
+            }
+            cartUpdates.length > 0 ? alert(cartUpdates) : null;
+            resolve("Cart has successfully updated");
         }
     })
 };
