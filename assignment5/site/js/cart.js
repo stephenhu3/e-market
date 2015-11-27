@@ -412,6 +412,41 @@ function checkoutCart() {
                 // resolved promise
                 function(val) {
                     updateCart();
+                    if (Object.keys(cart).length > 0) {
+                        postOrders().then(function() {
+                                updateCart();
+                            })
+                            // rejected promise
+                            .catch(function(reason) {
+                                alert(
+                                    "Checkout was unavailable. Please try again."
+                                );
+                                console.log('Handle rejected promise (' +
+                                    reason +
+                                    ') here.');
+                                reject(reason);
+                            });
+
+                        // update product stock based on cart quantities
+                        putProducts().then(function(val) {
+                                console.log("putproducts request made");
+                                updateCart();
+                            })
+                            // rejected promise
+                            .catch(function(reason) {
+                                alert(
+                                    "Checkout was unavailable. Please try again."
+                                );
+                                console.log('Handle rejected promise (' +
+                                    reason +
+                                    ') here.');
+                                reject(reason);
+                            });
+                    } else {
+                        alert(
+                            "Please add some items into your cart before checking out."
+                        );
+                    }
                 })
             .catch(
                 // rejected promise
@@ -421,41 +456,6 @@ function checkoutCart() {
                         ') here.');
                     reject(reason);
                 });
-        if (Object.keys(cart).length > 0) {
-            postOrders().then(function() {
-                    updateCart();
-                })
-                // rejected promise
-                .catch(function(reason) {
-                    alert(
-                        "Checkout was unavailable. Please try again."
-                    );
-                    console.log('Handle rejected promise (' +
-                        reason +
-                        ') here.');
-                    reject(reason);
-                });
-
-            // update product stock based on cart quantities
-            putProducts().then(function(val) {
-                    console.log("putproducts request made");
-                    updateCart();
-                })
-                // rejected promise
-                .catch(function(reason) {
-                    alert(
-                        "Checkout was unavailable. Please try again."
-                    );
-                    console.log('Handle rejected promise (' +
-                        reason +
-                        ') here.');
-                    reject(reason);
-                });
-        } else {
-            alert(
-                "Please add some items into your cart before checking out."
-            );
-        }
 
         function updateCart() {
             var cartUpdates = "";
