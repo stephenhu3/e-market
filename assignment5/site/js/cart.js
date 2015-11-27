@@ -156,7 +156,7 @@ function updateInactivityDisplay() {
     document.getElementById("inactivity-counter").innerHTML = inactivityMessage;
 }
 
-function attemptProductsGETRequest(prod) {
+function getProducts(prod) {
     return new Promise(function(resolve, reject) {
         var tries = 1;
         var MAX_TRIES = 5;
@@ -165,42 +165,42 @@ function attemptProductsGETRequest(prod) {
             var url = "http://localhost:8080/products?token=" + USER_AUTH_TOKEN;
             x.open("GET", url);
             var loader = function() {
-                if (x.status === 200) {
-                    console.log("Request success");
-                    var responseText = x.responseText;
-                    var response = null;
-                    response = JSON.parse(responseText);
-                    if (x.getResponseHeader("Content-type") ===
-                        "application/json; charset=utf-8") {
-                        try {
-                            response = JSON.parse(responseText);
-                        } catch (e) {
-                            response = null;
+                    if (x.status === 200) {
+                        console.log("Request success");
+                        var responseText = x.responseText;
+                        var response = null;
+                        response = JSON.parse(responseText);
+                        if (x.getResponseHeader("Content-type") ===
+                            "application/json; charset=utf-8") {
+                            try {
+                                response = JSON.parse(responseText);
+                            } catch (e) {
+                                response = null;
+                                console.warn(
+                                    "Could not parse JSON from " +
+                                    url);
+                            }
+                        }
+                        tries = 1; // reset tries
+                        updateProduct(response);
+                    } else {
+                        console.error(
+                            "Request contained status code: " +
+                            x.status);
+                        if (tries < MAX_TRIES) {
+                            tries++;
+                            doRequest();
+                        } else {
                             console.warn(
-                                "Could not parse JSON from " +
-                                url);
+                                "Maximum request attempts reached"
+                            );
+                            reject(
+                                "Maximum request attempts reached"
+                            );
                         }
                     }
-                    tries = 1; // reset tries
-                    updateProduct(response);
-                } else {
-                    console.error(
-                        "Request contained status code: " +
-                        x.status);
-                    if (tries < MAX_TRIES) {
-                        tries++;
-                        doRequest();
-                    } else {
-                        console.warn(
-                            "Maximum request attempts reached"
-                        );
-                        reject(
-                            "Maximum request attempts reached"
-                        );
-                    }
                 }
-            }
-            // update product with obj's price and quantity properties
+                // update product with obj's price and quantity properties
             function updateProduct(obj) {
                 if (obj) {
                     var price;
@@ -258,7 +258,7 @@ function attemptProductsGETRequest(prod) {
     });
 }
 
-function attemptOrderPOSTRequest() {
+function postOrders() {
     return new Promise(function(resolve, reject) {
         var tries = 1;
         var MAX_TRIES = 5;
@@ -314,6 +314,56 @@ function attemptOrderPOSTRequest() {
     });
 }
 
+// Update the product stock for each product in user's cart based on their purchase
+function putProducts() {
+    return new Promise(function(resolve, reject) {
+        var tries = 1;
+        var MAX_TRIES = 5;
+        (function doRequest() {
+            var x = new XMLHttpRequest();
+            var url = "http://localhost:8080/products";
+            x.open("PUT", url);
+            var loader = function() {
+                if (x.status === 200) {
+                    console.log("Request success");
+                    tries = 1; // reset tries
+                } else {
+                    console.error(
+                        "Request contained status code: " +
+                        x.status);
+                    if (tries < MAX_TRIES) {
+                        tries++;
+                        doRequest();
+                    } else {
+                        console.warn(
+                            "Maximum request attempts reached"
+                        );
+                        reject(
+                            "Maximum request attempts reached"
+                        );
+                    }
+                }
+            }
+            x.onabort = function() {
+                console.error("Request aborted");
+            };
+            x.timeout = 1000;
+            x.ontimeout = function() {
+                console.error("Request timed out");
+                loader();
+            };
+            x.onerror = function() {
+                console.error(
+                    "Request contained an error with status code: " +
+                    x.status);
+                loader();
+            };
+            x.setRequestHeader('Content-Type', 'application/json');
+            x.send(JSON.stringify(cart));
+        })();
+    });
+}
+
 // Update product thumbnail images using the product variable
 function updateProductImages() {
     // Show product images if available
@@ -331,11 +381,11 @@ function updateProductImages() {
                         return foundProducts[index].innerHTML ===
                             productDisplayNames.toDisplayName(
                                 key);
-                });
+                    });
                 foundProduct.siblings(".box")
                     .css("background", "11px 0px/225px 225px url(" +
-                            product[key]["url"] +
-                            ") no-repeat");
+                        product[key]["url"] +
+                        ") no-repeat");
             }
         }
     }
@@ -358,9 +408,7 @@ function checkoutCart() {
                 oldCart.push(oldItem);
             }
         }
-        console.log("old cart");
-        console.log(oldCart);
-        attemptProductsGETRequest(product).then(
+        getProducts(product).then(
                 // resolved promise
                 function(val) {
                     updateCart();
@@ -374,22 +422,41 @@ function checkoutCart() {
                     reject(reason);
                 });
         if (Object.keys(cart).length > 0) {
-            attemptOrderPOSTRequest().then(
-                    // resolved promise
-                    function(val) {
-                        updateCart();
-                    })
-                .catch(
-                    // rejected promise
-                    function(reason) {
-                        alert("Checkout was unavailable. Please try again.");
-                        console.log('Handle rejected promise (' + reason +
-                            ') here.');
-                        reject(reason);
-                    });
+            postOrders().then(function() {
+                    updateCart();
+                })
+                // rejected promise
+                .catch(function(reason) {
+                    alert(
+                        "Checkout was unavailable. Please try again."
+                    );
+                    console.log('Handle rejected promise (' +
+                        reason +
+                        ') here.');
+                    reject(reason);
+                });
+
+            // update product stock based on cart quantities
+            putProducts().then(function(val) {
+                    console.log("putproducts request made");
+                    updateCart();
+                })
+                // rejected promise
+                .catch(function(reason) {
+                    alert(
+                        "Checkout was unavailable. Please try again."
+                    );
+                    console.log('Handle rejected promise (' +
+                        reason +
+                        ') here.');
+                    reject(reason);
+                });
         } else {
-            alert("Please add some items into your cart before checking out.");
+            alert(
+                "Please add some items into your cart before checking out."
+            );
         }
+
         function updateCart() {
             var cartUpdates = "";
             for (var i = 0; i < oldCart.length; i++) {
@@ -432,7 +499,7 @@ function checkoutCart() {
 
 // On load, start the timer and display the cart total price
 window.onload = function() {
-    attemptProductsGETRequest(product);
+    getProducts(product);
     resetTimer();
     updateCartDisplay();
 }
