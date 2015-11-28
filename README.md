@@ -1,3 +1,4 @@
-A simple online marketplace site developed with back-end services powered by MongoDB and a Node.js RESTful API
+### BuySmart
+#### A simple online marketplace developed with back-end services powered by MongoDB and a Node.js RESTful API
 
-Developed by Stephen Hu and Nathan Yee
+###### Developed by Stephen Hu and Nathan Yee
