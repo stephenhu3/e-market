@@ -162,7 +162,7 @@ function getProducts(prod) {
         var MAX_TRIES = 5;
         (function doRequest() {
             var x = new XMLHttpRequest();
-            var url = "http://localhost:8080/products?token=" + USER_AUTH_TOKEN;
+            var url = "https://e-market-rest.herokuapp.com/products?token=" + USER_AUTH_TOKEN
             // var sandboxUrl = "https://cpen400a.herokuapp.com/products";
             x.open("GET", url);
             var loader = function() {
@@ -254,7 +254,7 @@ function postOrders() {
     return new Promise(function(resolve, reject) {
         (function doRequest() {
             var x = new XMLHttpRequest();
-            var url = "http://localhost:8080/orders?token=" + USER_AUTH_TOKEN;
+            var url = "https://e-market-rest.herokuapp.com/orders?token=" + USER_AUTH_TOKEN;
             x.open("POST", url);
             var loader = function() {
                 if (x.status === 200) {
@@ -294,7 +294,7 @@ function putProducts() {
     return new Promise(function(resolve, reject) {
         (function doRequest() {
             var x = new XMLHttpRequest();
-            var url = "http://localhost:8080/products?token=" + USER_AUTH_TOKEN;
+            var url = "https://e-market-rest.herokuapp.com/products?token=" + USER_AUTH_TOKEN;
             x.open("PUT", url);
             var loader = function() {
                 if (x.status === 200) {
