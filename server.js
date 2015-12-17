@@ -13,6 +13,15 @@ app.use(bodyParser.urlencoded({
 }));
 app.use(bodyParser.json());
 
+// Add headers
+app.use(function (req, res, next) {
+    res.setHeader('Access-Control-Allow-Origin', 'http://stephenhu.me');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+    res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
+    res.setHeader('Access-Control-Allow-Credentials', true);
+    next();
+});
+
 // Fill in credentials
 var DBUSER = process.env.MONGOLAB_USER;
 var DBPASS = process.env.MONGOLAB_PASS;
@@ -20,7 +29,7 @@ var DBPASS = process.env.MONGOLAB_PASS;
 var mongoose = require('mongoose');
 // connect to hosted mongolab db
 var mongodbUri = 'mongodb://' + DBUSER + ':' + DBPASS +
-    'ds033175.mongolab.com:33175/e-market';
+    '@ds033175.mongolab.com:33175/e-market';
 var mongooseUri = uriUtil.formatMongoose(mongodbUri);
 var mongooseLocalUri = 'mongodb://localhost/rest_api'; // connect to local db
 
