@@ -72,8 +72,8 @@ router.use(function(req, res, next) {
     next(); // make sure we go to the next routes and don't stop here
 });
 
-// test route to make sure everything is working (accessed at GET http://localhost:8080/api)
-router.get('/api', function(req, res) {
+// test default route to make sure everything is working (accessed at GET http://localhost:8080/)
+router.get('/', function(req, res) {
     res.json({
         message: 'You are using BuySmart REST API'
     });
@@ -395,7 +395,6 @@ router.route('/users')
 
 
 // REGISTER OUR ROUTES -------------------------------
-// all of our routes will be prefixed with /api
 app.use('/', router);
 
 // START THE SERVER
