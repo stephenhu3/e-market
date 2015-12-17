@@ -20,11 +20,11 @@ var DBPASS = process.env.MONGOLAB_PASS;
 var mongoose = require('mongoose');
 // connect to hosted mongolab db
 var mongodbUri = 'mongodb://' + DBUSER + ':' + DBPASS +
-    '@ds051524.mongolab.com:51524/group9';
+    'ds033175.mongolab.com:33175/e-market';
 var mongooseUri = uriUtil.formatMongoose(mongodbUri);
 var mongooseLocalUri = 'mongodb://localhost/rest_api'; // connect to local db
 
-mongoose.connect(mongooseLocalUri, function(error) {
+mongoose.connect(mongooseUri, function(error) {
     if (error) {
         console.log('Failed to connect to server:\n' + error);
     }
